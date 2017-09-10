@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using BitcoinShow.Web.Models;
 using BitcoinShow.Web.Repositories.Interface;
 using BitcoinShow.Web.Services.Interface;
 
@@ -5,15 +7,40 @@ namespace BitcoinShow.Web.Services
 {
     public class QuestionService : IQuestionService
     {
-        private IQuestionRepository repository { get; set; }
+        private IQuestionRepository _repository { get; set; }
         public QuestionService(IQuestionRepository repository)
         {
-            this.repository = repository;
+            this._repository = repository;
         }
 
-        public string Get(string question)
+        public Question Add(Question question)
         {
-            return this.repository.Get(question);
+            throw new System.NotImplementedException();
+        }
+
+        public List<Question> GetAll()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Question GetById(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Question GetByLevel(QuestionLevelEnum level)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Delete(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Update(Question quesiton)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

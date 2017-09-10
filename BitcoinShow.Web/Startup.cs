@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BitcoinShow.Web.Models;
 using BitcoinShow.Web.Repositories;
 using BitcoinShow.Web.Repositories.Interface;
 using BitcoinShow.Web.Services;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -50,7 +52,6 @@ namespace BitcoinShow.Web
             services.UseSimpleInjectorAspNetRequestScoping(container);
         }
 
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory factory)
         {
@@ -83,6 +84,15 @@ namespace BitcoinShow.Web
             // Add application services. For instance:
             container.Register<IQuestionService, QuestionService>(Lifestyle.Scoped);
             container.Register<IQuestionRepository, QuestionRepository>(Lifestyle.Scoped);
+
+
+            // container.Register(app.ApplicationServices.GetService<BitcoinShowDBContext>, Lifestyle.Singleton);
+            container.Register<BitcoinShowDBContext>(() => {
+                var options = new DbContextOptionsBuilder<BitcoinShowDBContext>()
+                    .UseInMemoryDatabase(databaseName: "BitcoinShowDB")
+                    .Options;
+                return new BitcoinShowDBContext(options);
+            },Lifestyle.Scoped);
 
             //Cross-wire ASP.NET services (if any). For instance:
             container.CrossWire<ILoggerFactory>(app);
