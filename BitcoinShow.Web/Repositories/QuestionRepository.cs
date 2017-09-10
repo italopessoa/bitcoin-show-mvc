@@ -16,9 +16,10 @@ namespace BitcoinShow.Web.Repositories
 
         public Question Add(Question question)
         {
-            throw new System.NotImplementedException();
+             _context.Add (question);
+             return question;
         }
-
+        
         public void Delete(int id)
         {
             throw new System.NotImplementedException();

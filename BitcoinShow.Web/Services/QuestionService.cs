@@ -15,7 +15,8 @@ namespace BitcoinShow.Web.Services
 
         public Question Add(Question question)
         {
-            throw new System.NotImplementedException();
+             _repository.Add(question);
+            return question;
         }
 
         public List<Question> GetAll()

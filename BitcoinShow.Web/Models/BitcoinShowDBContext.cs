@@ -25,6 +25,11 @@ namespace BitcoinShow.Web.Models
             modelBuilder.Entity<QuestionOption>()
                 .HasOne<Question>(o=>o.Question)
                 .WithMany(q=>q.QuestionOptions);
+
+            modelBuilder.Entity<Question>()
+            .Property(p=>p.AnswerId).IsRequired();
+            modelBuilder.Entity<Question>()
+            .Property(p=>p.Title).IsRequired();
         }
 
         

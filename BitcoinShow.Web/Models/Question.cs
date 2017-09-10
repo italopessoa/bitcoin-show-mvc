@@ -22,7 +22,8 @@ namespace BitcoinShow.Web.Models
         /// <summary>
         /// Question Title
         /// </summary>
-        [Required]
+        [Required(ErrorMessage="Question title cannot be empty")]
+        [MaxLength(100,ErrorMessage="Question title cannot have more than 100 characters")]
         public string Title { get; set; }
 
         /// <summary>
@@ -35,6 +36,8 @@ namespace BitcoinShow.Web.Models
         /// </summary>
         public List<QuestionOption> QuestionOptions { get; set; }
 
+        [Required]
+        public int? AnswerId { get; set; }
         /// <summary>
         /// Questino answer
         /// </summary>
