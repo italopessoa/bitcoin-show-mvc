@@ -14,10 +14,9 @@ namespace BitcoinShow.Web.Repositories
             this._context = context;
         }
 
-        public Question Add(Question question)
+        public void Add(Question question)
         {
              _context.Add (question);
-             return question;
         }
         
         public void Delete(int id)

@@ -13,10 +13,9 @@ namespace BitcoinShow.Web.Services
             this._repository = repository;
         }
 
-        public Question Add(Question question)
+        public void Add(Question question)
         {
-             _repository.Add(question);
-            return question;
+            _repository.Add(question);            
         }
 
         public List<Question> GetAll()
