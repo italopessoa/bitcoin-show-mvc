@@ -1,0 +1,18 @@
+version: 0.1.{build}
+branches:
+  only:
+  - develop
+  - master
+image: Visual Studio 2017
+configuration: Release
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+before_build:
+- ps: dotnet restore
+build:
+  verbosity: minimal
+test_script:
+- ps: dotnet test .\BitcoinShow.Test\
