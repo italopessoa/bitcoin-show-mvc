@@ -85,11 +85,9 @@ namespace BitcoinShow.Web
             container.Register<IQuestionService, QuestionService>(Lifestyle.Scoped);
             container.Register<IQuestionRepository, QuestionRepository>(Lifestyle.Scoped);
 
-
-            // container.Register(app.ApplicationServices.GetService<BitcoinShowDBContext>, Lifestyle.Singleton);
             container.Register<BitcoinShowDBContext>(() => {
                 var options = new DbContextOptionsBuilder<BitcoinShowDBContext>()
-                    .UseInMemoryDatabase(databaseName: "BitcoinShowDB")
+                    .UseSqlServer(Configuration.GetConnectionString("SqlServer"))
                     .Options;
                 return new BitcoinShowDBContext(options);
             },Lifestyle.Scoped);
