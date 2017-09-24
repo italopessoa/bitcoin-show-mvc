@@ -86,10 +86,15 @@ namespace BitcoinShow.Web
             container.Register<IQuestionRepository, QuestionRepository>(Lifestyle.Scoped);
 
             container.Register<BitcoinShowDBContext>(() => {
+                var cs = Configuration.GetConnectionString("SqlServer");
                 var options = new DbContextOptionsBuilder<BitcoinShowDBContext>()
-                    .UseSqlServer(Configuration.GetConnectionString("SqlServer"))
+                    .UseSqlServer(cs)
                     .Options;
-                return new BitcoinShowDBContext(options);
+                
+                var context = new BitcoinShowDBContext(options);
+                context.Database.Migrate();
+                context.Database.EnsureCreated();
+                return context;
             },Lifestyle.Scoped);
 
             //Cross-wire ASP.NET services (if any). For instance:

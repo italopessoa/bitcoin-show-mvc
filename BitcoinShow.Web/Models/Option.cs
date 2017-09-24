@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BitcoinShow.Web.Models
 {
     /// <summary>
-    ///     Entity that represents an Question option
+    ///     Entity that represents a Question option
     /// </summary>
+    [Table("Option", Schema = "bs")]
     public class Option
     {
         /// <summary>

@@ -17,6 +17,7 @@ namespace BitcoinShow.Web.Repositories
         public void Add(Question question)
         {
              _context.Add (question);
+             _context.SaveChanges();
         }
         
         public void Delete(int id)

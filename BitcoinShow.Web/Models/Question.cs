@@ -7,6 +7,7 @@ namespace BitcoinShow.Web.Models
     /// <summary>
     ///     Question
     /// </summary>
+    [Table("Question", Schema = "bs")]
     public class Question
     {
         /// <summary>
@@ -25,7 +26,19 @@ namespace BitcoinShow.Web.Models
         ///     Question Title
         /// </summary>
         [Required()]
-        [MaxLength(100)]
+        [MaxLength(150)]
         public string Title { get; set; }
+
+        /// <summary>
+        ///     Question answer
+        /// </summary>
+        // [Required]
+        // public Option Answer { get; set; }
+
+        /// <summary>
+        ///     Question options
+        /// </summary>
+        [Required]
+        public List<Option> Options { get; set; }
     }
 }

@@ -4,8 +4,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
 namespace BitcoinShow.Web.Models
-{
-    
+{   
     public class BitcoinShowDBContext : DbContext
     {
         public BitcoinShowDBContext(DbContextOptions<BitcoinShowDBContext> options) 
@@ -16,5 +15,13 @@ namespace BitcoinShow.Web.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
         }
+        
+        #region Sets
+        
+        public DbSet<Option> Options { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        
+        #endregion
+
     }
 }

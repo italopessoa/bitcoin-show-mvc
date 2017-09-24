@@ -18,7 +18,7 @@ namespace BitcoinShow.Web
             var builder = new DbContextOptionsBuilder<BitcoinShowDBContext>();
 
             var connectionString = configuration.GetConnectionString("SqlServer");
-            builder.UseSqlite(connectionString);
+            builder.UseSqlServer(connectionString);
 
             return new BitcoinShowDBContext(builder.Options);
         }
