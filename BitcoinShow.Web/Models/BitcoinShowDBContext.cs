@@ -7,6 +7,7 @@ namespace BitcoinShow.Web.Models
 {   
     public class BitcoinShowDBContext : DbContext
     {
+        public BitcoinShowDBContext() {}
         public BitcoinShowDBContext(DbContextOptions<BitcoinShowDBContext> options) 
             : base(options)
         {
@@ -18,7 +19,7 @@ namespace BitcoinShow.Web.Models
         
         #region Sets
         
-        public DbSet<Option> Options { get; set; }
+        public virtual DbSet<Option> Options { get; set; }
         public DbSet<Question> Questions { get; set; }
         
         #endregion
