@@ -25,16 +25,16 @@ namespace BitcoinShow.Web.Models
         /// <summary>
         ///     Option text
         /// </summary>
-        [Required]
+        [Required(AllowEmptyStrings = false)]
         [MaxLength(200)]
         public string Text { get; set; }
 
-        public override bool Equals(object obj) 
+        public override bool Equals(object obj)
         {
-            if(obj == null) return false;
-            if(!(obj is Option)) return false;
+            if (obj == null) return false;
+            if (!(obj is Option)) return false;
 
-            if (obj == null || GetType() != obj.GetType()) 
+            if (obj == null || GetType() != obj.GetType())
                 return false;
 
             Option option = (Option)obj;

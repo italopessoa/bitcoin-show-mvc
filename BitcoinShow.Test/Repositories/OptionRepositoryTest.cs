@@ -1,8 +1,11 @@
+using System;
+using System.Linq;
 using BitcoinShow.Web.Models;
 using BitcoinShow.Web.Repositories;
 using BitcoinShow.Web.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using Ploeh.AutoFixture.Xunit2;
 using Xunit;
 
 namespace BitcoinShow.Test.Repositories
@@ -10,92 +13,217 @@ namespace BitcoinShow.Test.Repositories
     public class OptionRepositoryTest
     {
         [Fact]
-        public void Add_Option_Without_Text_Error2()
+        public void Add_Option_Without_Text_Error()
         {
-            // var mockSet = new Mock<DbSet<Option>>(); 
- 
-            // var mockContext = new Mock<BitcoinShowDBContext>(); 
-            // mockContext.Setup(m => m.Options).Returns(mockSet.Object); 
- 
-            // Option newOption = new Option();
-            // newOption.Text = "teste";
-            // OptionRepository repository = new OptionRepository(mockContext.Object);            
-            // repository.Add(newOption); 
- 
-            // mockSet.Verify(m => m.Add(It.IsAny<Option>()), Times.Once()); 
-            // mockContext.Verify(m => m.SaveChanges(), Times.Once()); 
-
             var options = new DbContextOptionsBuilder<BitcoinShowDBContext>()
                 .UseInMemoryDatabase(System.Guid.NewGuid().ToString())
                 .Options;
             var context = new BitcoinShowDBContext(options);
             OptionRepository repository = new OptionRepository(context);
-            
-            Option expected = new Option();
-            expected.Text = "teste";
-            expected.Id = 1;
 
-            Option actual = new Option();
-            actual.Text = "teste";
+            Option option = new Option();
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => repository.Add(option));
 
-            repository.Add(actual);
-
-            Assert.True(actual.Id > 0, "The actual Id is not greater than 0");
-            Assert.Equal(expected,actual);
-        }
-
-        [Fact]
-        public void Add_Option_Without_Text_Error()
-        {
-            throw new System.NotImplementedException();
+            Assert.NotNull(ex);
+            Assert.Equal(nameof(option.Text), ex.ParamName);
         }
 
         [Fact]
         public void Add_Option_With_Text_Greater_Than_Max_Size_Error()
         {
-            throw new System.NotImplementedException();
+            var options = new DbContextOptionsBuilder<BitcoinShowDBContext>()
+               .UseInMemoryDatabase(System.Guid.NewGuid().ToString())
+               .Options;
+            var context = new BitcoinShowDBContext(options);
+            OptionRepository repository = new OptionRepository(context);
+
+            Option option = new Option();
+
+            option.Text = new String('A', 201);
+            ArgumentOutOfRangeException ex = Assert.Throws<ArgumentOutOfRangeException>(() => repository.Add(option));
+
+            Assert.NotNull(ex);
+            Assert.Equal(nameof(option.Text), ex.ParamName);
+            Assert.Equal(0, context.Options.Count());
+        }
+
+        [Theory, AutoData]
+        public void Add_Option_Success(string text, int x)
+        {
+            var options = new DbContextOptionsBuilder<BitcoinShowDBContext>()
+               .UseInMemoryDatabase(System.Guid.NewGuid().ToString())
+               .Options;
+            var context = new BitcoinShowDBContext(options);
+            OptionRepository repository = new OptionRepository(context);
+
+            Option expected = new Option();
+            expected.Id = 1;
+            expected.Text = text;
+
+            Option actual = new Option();
+            actual.Text = text;
+
+            repository.Add(actual);
+            Assert.NotNull(actual);
+            Assert.Equal(expected, actual);
+            Assert.Equal(1, context.Options.Count());
         }
 
         [Fact]
-        public void Add_Option_With_Text_Repeated_Letter_Error()
+        public void Get_Option_By_Id_Not_Found()
         {
-            throw new System.NotImplementedException();
+            var options = new DbContextOptionsBuilder<BitcoinShowDBContext>()
+                    .UseInMemoryDatabase(System.Guid.NewGuid().ToString())
+                    .Options;
+            var context = new BitcoinShowDBContext(options);
+
+            context.Options.Add(new Option() { Text = "New option" });
+            context.SaveChanges();
+            OptionRepository repository = new OptionRepository(context);
+
+            var option = repository.GetById(100);
+            Assert.Null(option);
         }
 
         [Fact]
-        public void Add_Option_Success()
+        public void Get_Option_By_Id_Success()
         {
-            throw new System.NotImplementedException();
+            var options = new DbContextOptionsBuilder<BitcoinShowDBContext>()
+                    .UseInMemoryDatabase(System.Guid.NewGuid().ToString())
+                    .Options;
+            var context = new BitcoinShowDBContext(options);
+            var expected = new Option() { Text = "New option" };
+            context.Options.Add(expected);
+            context.SaveChanges();
+            OptionRepository repository = new OptionRepository(context);
+
+            var actual = repository.GetById(1);
+            Assert.NotNull(actual);
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
         public void Update_Option_Without_Text_Error()
         {
-            throw new System.NotImplementedException();
+            var options = new DbContextOptionsBuilder<BitcoinShowDBContext>()
+                .UseInMemoryDatabase(System.Guid.NewGuid().ToString())
+                .Options;
+            var context = new BitcoinShowDBContext(options);
+            context.Options.Add(new Option() { Text = "New option" });
+            context.SaveChanges();
+
+            OptionRepository repository = new OptionRepository(context);
+
+            Option updatedOption = new Option();
+            updatedOption.Id = 1;
+
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => repository.Update(updatedOption));
+
+            Assert.NotNull(ex);
+            Assert.Equal(nameof(updatedOption.Text), ex.ParamName);
         }
 
         [Fact]
-        public void Update_Option_With_Text_Repeated_Letter_Error()
+        public void Update_Option_NonExistent_Error()
         {
-            throw new System.NotImplementedException();
+            var options = new DbContextOptionsBuilder<BitcoinShowDBContext>()
+                .UseInMemoryDatabase(System.Guid.NewGuid().ToString())
+                .Options;
+            var context = new BitcoinShowDBContext(options);
+
+            OptionRepository repository = new OptionRepository(context);
+
+            Option updatedOption = new Option();
+            updatedOption.Id = 1;
+            updatedOption.Text = "Update";
+
+            DbUpdateException ex = Assert.Throws<DbUpdateException>(() => repository.Update(updatedOption));
+
+            Assert.NotNull(ex);
+            Assert.Equal("The current option does not exists.", ex.Message);
+        }
+
+        [Fact]
+        public void Update_Option_With_Text_Greater_Than_Max_Size_Error()
+        {
+            var options = new DbContextOptionsBuilder<BitcoinShowDBContext>()
+                .UseInMemoryDatabase(System.Guid.NewGuid().ToString())
+                .Options;
+            var context = new BitcoinShowDBContext(options);
+            context.Options.Add(new Option() { Text = "New option" });
+            context.SaveChanges();
+
+            OptionRepository repository = new OptionRepository(context);
+
+            Option updatedOption = new Option();
+            updatedOption.Id = 1;
+            updatedOption.Text = new String('B', 201);
+
+            ArgumentOutOfRangeException ex = Assert.Throws<ArgumentOutOfRangeException>(() => repository.Update(updatedOption));
+
+            Assert.NotNull(ex);
+            Assert.Equal(nameof(updatedOption.Text), ex.ParamName);
         }
 
         [Fact]
         public void Update_Option_Success()
         {
-            throw new System.NotImplementedException();
+            var options = new DbContextOptionsBuilder<BitcoinShowDBContext>()
+               .UseInMemoryDatabase(System.Guid.NewGuid().ToString())
+               .Options;
+            var context = new BitcoinShowDBContext(options);
+            context.Options.Add(new Option() { Text = "New option" });
+            context.SaveChanges();
+
+            OptionRepository repository = new OptionRepository(context);
+
+            Option expected = new Option();
+            expected.Id = 1;
+            expected.Text = "Update option";
+
+            Option actual = new Option();
+            actual.Id = 1;
+            actual.Text = "Update option";
+
+            repository.Update(actual);
+
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
         public void Delete_Option_Not_Found_Error()
         {
-            throw new System.NotImplementedException();
+            var options = new DbContextOptionsBuilder<BitcoinShowDBContext>()
+               .UseInMemoryDatabase(System.Guid.NewGuid().ToString())
+               .Options;
+            var context = new BitcoinShowDBContext(options);
+
+            OptionRepository repository = new OptionRepository(context);
+
+            DbUpdateException ex = Assert.Throws<DbUpdateException>(() => repository.Delete(1));
+
+            Assert.NotNull(ex);
+            Assert.Equal("The current option does not exists.", ex.Message);
         }
 
         [Fact]
         public void Delete_Option_Success()
         {
-            throw new System.NotImplementedException();
+            var options = new DbContextOptionsBuilder<BitcoinShowDBContext>()
+               .UseInMemoryDatabase(System.Guid.NewGuid().ToString())
+               .Options;
+            var context = new BitcoinShowDBContext(options);
+
+            Option deleteOption = new Option();
+            deleteOption.Text = "delete";
+            context.Options.Add(deleteOption);
+            context.SaveChanges();
+
+            OptionRepository repository = new OptionRepository(context);
+
+            repository.Delete(1);
+
+            Assert.Equal(0, context.Options.Count());
         }
     }
 }
