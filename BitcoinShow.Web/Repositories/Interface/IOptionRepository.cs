@@ -12,17 +12,11 @@ namespace BitcoinShow.Web.Repositories.Interface
         void Add(Option newOption);
 
         /// <summary>
-        ///     Get all the options
-        /// </summary>
-        /// <returns> List of options. </returns>
-        System.Collections.Generic.List<Option> GetAll();
-
-        /// <summary>
         ///     Search option by id.
         /// </summary>
         /// <param name="id"> Option Id. </param>
         /// <returns> Option. </returns>
-        Option GetById(int id);
+        Option Get(int id);
 
         /// <summary>
         ///     Delete option.

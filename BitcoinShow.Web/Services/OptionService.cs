@@ -1,3 +1,4 @@
+using BitcoinShow.Web.Models;
 using BitcoinShow.Web.Services.Interface;
 
 namespace BitcoinShow.Web.Services
@@ -9,25 +10,28 @@ namespace BitcoinShow.Web.Services
         {
             _repository = repository;
         }
-        
+
         public object Add(string text)
         {
-            throw new System.NotImplementedException();
+            var newOption = new Option() { Text = text };
+            _repository.Add(newOption);
+            return newOption;
         }
 
         public void Delete(int id)
         {
-            throw new System.NotImplementedException();
+            _repository.Delete(id);
         }
 
         public object Get(int id)
         {
-            throw new System.NotImplementedException();
+            return _repository.Get(id);
         }
 
-        public void Update(object option)
+        public object Update(object option)
         {
-            throw new System.NotImplementedException();
+            _repository.Update(option as Option);
+            return option;
         }
     }
 }

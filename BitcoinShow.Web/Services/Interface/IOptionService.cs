@@ -20,7 +20,8 @@ namespace BitcoinShow.Web.Services.Interface
         ///     Update option.
         /// </summary>
         /// <param name="option"> Option object with new values. </param>
-        void Update(object option);
+        /// <returns> Option updated. </returns>
+        object Update(object option);
 
         /// <summary>
         ///     Delete option.

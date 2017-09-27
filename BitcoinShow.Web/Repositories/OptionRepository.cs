@@ -22,12 +22,7 @@ namespace BitcoinShow.Web.Repositories
             throw new System.NotImplementedException();
         }
 
-        public List<Option> GetAll()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Option GetById(int id)
+        public Option Get(int id)
         {
             throw new System.NotImplementedException();
         }

@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -38,7 +39,8 @@ namespace BitcoinShow.Web.Models
                 return false;
 
             Option option = (Option)obj;
-            return (Id == option.Id) && (Text.Equals(option.Text));
+            return (Id == option.Id) 
+                && (!String.IsNullOrEmpty(Text) ? Text.Equals(option.Text) : String.IsNullOrEmpty(option.Text));
         }
 
         public override int GetHashCode()
@@ -47,7 +49,8 @@ namespace BitcoinShow.Web.Models
             {
                 int hash = 17;
                 hash = hash * 23 + Id.GetHashCode();
-                hash = hash * 23 + Text.GetHashCode();
+                if (!string.IsNullOrEmpty(Text))
+                    hash = hash * 23 + Text.GetHashCode();
                 return hash;
             }
         }
