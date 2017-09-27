@@ -12,10 +12,10 @@ dotnet_csproj:
   package_version: '{version}'
 before_build:
 - ps: >-
+    dotnet restore
     choco install xunit
     choco install opencover.portable
     choco install codecov
-    dotnet restore
 build:
   project: BitcoinShow.MVC.sln  
   verbosity: minimal
