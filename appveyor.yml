@@ -13,8 +13,11 @@ dotnet_csproj:
 before_build:
 - ps: >-
     dotnet restore
+    
     choco install xunit
+    
     choco install opencover.portable
+    
     choco install codecov
 build:
   project: BitcoinShow.MVC.sln  
@@ -22,5 +25,7 @@ build:
 test_script:
 - ps: >-
     dotnet test .\BitcoinShow.Test\
+    
     OpenCover.Console.exe -register:user -target:"%xunit20%\xunit.console.x86.exe" -targetargs:".\BitcoinShow.Test\bin\Release\netcoreapp2.0\BitcoinShow.Test.dll -noshadow" -filter:"+[BitcoinShow.Web*]* -[BitcoinShow.Test*]*" -output:".\BitcoinShow_coverage.xml"
+    
     codecov -f "BitcoinShow_coverage.xml"
