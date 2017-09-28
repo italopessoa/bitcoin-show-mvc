@@ -38,7 +38,6 @@ namespace BitcoinShow.Web.Repositories
             }
 
             _context.Options.Add(newOption);
-            Console.WriteLine(newOption.Id);
             _context.SaveChanges();
         }
 
@@ -86,6 +85,7 @@ namespace BitcoinShow.Web.Repositories
             {
                 actualOption.Text = option.Text;
                 _context.Options.Update(actualOption);
+                option = actualOption;
             }
         }
     }
