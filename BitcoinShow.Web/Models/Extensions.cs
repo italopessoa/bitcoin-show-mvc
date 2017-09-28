@@ -13,6 +13,6 @@ namespace BitcoinShow.Web.Models
                 .GetField(item.ToString())
                 .GetCustomAttributes(typeof(DescriptionAttribute), false)
                 .Cast<DescriptionAttribute>()
-                .FirstOrDefault()?.Description ?? string.Empty;   
+                .FirstOrDefault()?.Description ?? string.Empty;
     }
 }

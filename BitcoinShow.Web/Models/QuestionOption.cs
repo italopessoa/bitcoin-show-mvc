@@ -14,7 +14,7 @@ namespace BitcoinShow.Web.Models
         /// </summary>
         [Key]
         public int Id { get; set; }
-        
+
         /// <summary>
         /// Option text
         /// </summary>
@@ -24,7 +24,7 @@ namespace BitcoinShow.Web.Models
         /// <summary>
         /// Question to which this option belongs
         /// </summary>
-        
+
         public int QuestionId { get; set; }
 
         // [ForeignKey("QuestionId")]

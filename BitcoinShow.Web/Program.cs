@@ -20,7 +20,7 @@ namespace BitcoinShow.Web
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseContentRoot($"{System.IO.Directory.GetCurrentDirectory()}\\BitcoinShow.Web")
-                .ConfigureAppConfiguration((builderContexrt, config) => 
+                .ConfigureAppConfiguration((builderContexrt, config) =>
                 {
                     IHostingEnvironment env = builderContexrt.HostingEnvironment;
                     config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
