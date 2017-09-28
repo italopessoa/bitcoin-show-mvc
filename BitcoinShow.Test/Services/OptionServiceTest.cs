@@ -120,9 +120,10 @@ namespace BitcoinShow.Test.Services
         [Fact]
         public void Update_Option_Without_Text_Error()
         {
+            this._mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
+
             Option option = new Option();
             option.Text = null;
-            this._mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
             this._mockRepository.Setup(s => s.Update(option))
                 .Throws(new ArgumentNullException(nameof(option.Text)));
 
@@ -139,7 +140,7 @@ namespace BitcoinShow.Test.Services
             Assert.Equal(nameof(option.Text), ex.ParamName);
 
             optionToUpdate = new Option { Text = null };
-            ex = Assert.Throws<ArgumentNullException>(() => service.Add(String.Empty));
+            ex = Assert.Throws<ArgumentNullException>(() => service.Update(optionToUpdate));
             Assert.NotNull(ex);
             Assert.Equal(nameof(option.Text), ex.ParamName);
 

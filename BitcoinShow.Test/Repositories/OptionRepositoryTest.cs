@@ -48,7 +48,7 @@ namespace BitcoinShow.Test.Repositories
         }
 
         [Theory, AutoData]
-        public void Add_Option_Success(string text, int x)
+        public void Add_Option_Success(string text)
         {
             var options = new DbContextOptionsBuilder<BitcoinShowDBContext>()
                .UseInMemoryDatabase(System.Guid.NewGuid().ToString())
@@ -81,7 +81,7 @@ namespace BitcoinShow.Test.Repositories
             context.SaveChanges();
             OptionRepository repository = new OptionRepository(context);
 
-            var option = repository.GetById(100);
+            var option = repository.Get(100);
             Assert.Null(option);
         }
 
@@ -97,7 +97,7 @@ namespace BitcoinShow.Test.Repositories
             context.SaveChanges();
             OptionRepository repository = new OptionRepository(context);
 
-            var actual = repository.GetById(1);
+            var actual = repository.Get(1);
             Assert.NotNull(actual);
             Assert.Equal(expected, actual);
         }
@@ -222,8 +222,6 @@ namespace BitcoinShow.Test.Repositories
             OptionRepository repository = new OptionRepository(context);
 
             repository.Delete(1);
-
-            Assert.Equal(0, context.Options.Count());
         }
     }
 }
