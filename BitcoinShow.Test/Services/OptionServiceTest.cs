@@ -13,23 +13,21 @@ namespace BitcoinShow.Test.Services
 {
     public class OptionServiceTest
     {
-        private Mock<IOptionRepository> _mockRepository;
-
         [Fact]
         public void Add_Option_Without_Text_Error()
         {
-            this._mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
+            Mock<IOptionRepository> mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
 
             Option option = new Option();
             option.Text = null;
-            this._mockRepository.Setup(s => s.Add(option))
+            mockRepository.Setup(s => s.Add(option))
                 .Throws(new ArgumentNullException(nameof(option.Text)));
 
             option.Text = String.Empty;
-            this._mockRepository.Setup(s => s.Add(option))
+            mockRepository.Setup(s => s.Add(option))
                 .Throws(new ArgumentNullException(nameof(option.Text)));
 
-            OptionService service = new OptionService(this._mockRepository.Object);
+            OptionService service = new OptionService(mockRepository.Object);
 
             ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => service.Add(null));
             Assert.NotNull(ex);
@@ -39,99 +37,99 @@ namespace BitcoinShow.Test.Services
             Assert.NotNull(ex);
             Assert.Equal(nameof(option.Text), ex.ParamName);
 
-            this._mockRepository.Verify(m => m.Add(It.IsAny<Option>()), Times.AtLeast(2));
+            mockRepository.Verify(m => m.Add(It.IsAny<Option>()), Times.AtLeast(2));
         }
 
         [Fact]
         public void Add_Option_With_Text_Greater_Than_Max_Size_Error()
         {
-            this._mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
+            Mock<IOptionRepository> mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
 
             Option option = new Option();
             option.Text = new String('A', 201);
 
-            this._mockRepository.Setup(s => s.Add(option))
+            mockRepository.Setup(s => s.Add(option))
                 .Throws(new ArgumentOutOfRangeException(nameof(option.Text)));
 
-            OptionService service = new OptionService(this._mockRepository.Object);
+            OptionService service = new OptionService(mockRepository.Object);
 
             ArgumentOutOfRangeException ex = Assert.Throws<ArgumentOutOfRangeException>(() => service.Add(option.Text));
 
             Assert.NotNull(ex);
             Assert.Equal(nameof(option.Text), ex.ParamName);
-            this._mockRepository.Verify(m => m.Add(It.IsAny<Option>()), Times.Once());
+            mockRepository.Verify(m => m.Add(It.IsAny<Option>()), Times.Once());
         }
 
         [Theory, AutoData]
         public void Add_Option_Success(string text)
         {
-            this._mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
+            Mock<IOptionRepository> mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
 
             Option newOption = new Option();
             newOption.Text = text;
 
-            this._mockRepository.Setup(s => s.Add(newOption))
+            mockRepository.Setup(s => s.Add(newOption))
                 .Callback<Option>(o => o.Id = 1);
 
             Option expected = new Option();
             expected.Id = 1;
             expected.Text = text;
 
-            OptionService service = new OptionService(this._mockRepository.Object);
+            OptionService service = new OptionService(mockRepository.Object);
             var actual = service.Add(text);
 
             Assert.NotNull(actual);
             Assert.Equal(expected, actual);
-            this._mockRepository.Verify(m => m.Add(It.IsAny<Option>()), Times.Once());
+            mockRepository.Verify(m => m.Add(It.IsAny<Option>()), Times.Once());
         }
 
         [Fact]
         public void Get_Option_By_Id_Not_Found()
         {
-            this._mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
+            Mock<IOptionRepository> mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
 
             Option option = null;
-            this._mockRepository.Setup(s => s.Get(1)).Returns(option);
+            mockRepository.Setup(s => s.Get(1)).Returns(option);
 
-            OptionService service = new OptionService(this._mockRepository.Object);
+            OptionService service = new OptionService(mockRepository.Object);
             var actual = service.Get(1);
 
             Assert.Null(actual);
-            this._mockRepository.Verify(m => m.Get(It.IsAny<int>()), Times.Once());
+            mockRepository.Verify(m => m.Get(It.IsAny<int>()), Times.Once());
         }
 
         [Fact]
         public void Get_Option_By_Id_Success()
         {
-            this._mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
+            Mock<IOptionRepository> mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
 
-            this._mockRepository.Setup(s => s.Get(1)).Returns(new Option() { Id = 1, Text = "Donald Trump" });
+            mockRepository.Setup(s => s.Get(1)).Returns(new Option { Id = 1, Text = "Donald Trump" });
 
-            OptionService service = new OptionService(this._mockRepository.Object);
+            OptionService service = new OptionService(mockRepository.Object);
             Option expected = new Option { Id = 1, Text = "Donald Trump" };
 
             var actual = service.Get(1);
 
             Assert.NotNull(actual);
             Assert.Equal(expected, actual);
-            this._mockRepository.Verify(m => m.Get(It.IsAny<int>()), Times.Once());
+            mockRepository.Verify(m => m.Get(It.IsAny<int>()), Times.Once());
         }
 
         [Fact]
         public void Update_Option_Without_Text_Error()
         {
-            this._mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
+            Mock<IOptionRepository> mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
 
             Option option = new Option();
             option.Text = null;
-            this._mockRepository.Setup(s => s.Update(option))
+            mockRepository.Setup(s => s.Update(option))
                 .Throws(new ArgumentNullException(nameof(option.Text)));
 
             option.Text = String.Empty;
-            this._mockRepository.Setup(s => s.Update(option))
+            mockRepository.Setup(s => s.Update(option))
                 .Throws(new ArgumentNullException(nameof(option.Text)));
 
-            OptionService service = new OptionService(this._mockRepository.Object);
+            OptionService service = new OptionService(mockRepository.Object);
 
             Option optionToUpdate = new Option { Text = String.Empty };
 
@@ -144,23 +142,23 @@ namespace BitcoinShow.Test.Services
             Assert.NotNull(ex);
             Assert.Equal(nameof(option.Text), ex.ParamName);
 
-            this._mockRepository.Verify(m => m.Update(It.IsAny<Option>()), Times.AtLeast(2));
+            mockRepository.Verify(m => m.Update(It.IsAny<Option>()), Times.AtLeast(2));
         }
 
         [Fact]
         public void Update_Option_NonExistent_Error()
         {
-            this._mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
+            Mock<IOptionRepository> mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
 
             Option option666 = new Option { Id = 666, Text = "new text. 666" };
-            this._mockRepository.Setup(s => s.Update(option666))
+            mockRepository.Setup(s => s.Update(option666))
                 .Throws(new DbUpdateException("The current option does not exists.", new Exception()));
 
             Option option = new Option { Text = "new text. option without id" };
-            this._mockRepository.Setup(s => s.Update(option))
+            mockRepository.Setup(s => s.Update(option))
                 .Throws(new DbUpdateException("The current option does not exists.", new Exception()));
 
-            OptionService service = new OptionService(this._mockRepository.Object);
+            OptionService service = new OptionService(mockRepository.Object);
 
             Option optionToUpdate = new Option { Id = 666, Text = "new text. 666" };
             DbUpdateException ex = Assert.Throws<DbUpdateException>(() => service.Update(optionToUpdate));
@@ -172,76 +170,76 @@ namespace BitcoinShow.Test.Services
             Assert.NotNull(ex);
             Assert.Equal("The current option does not exists.", ex.Message);
 
-            this._mockRepository.Verify(m => m.Update(It.IsAny<Option>()), Times.AtLeast(2));
+            mockRepository.Verify(m => m.Update(It.IsAny<Option>()), Times.AtLeast(2));
         }
 
         [Fact]
         public void Update_Option_With_Text_Greater_Than_Max_Size_Error()
         {
-            this._mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
+            Mock<IOptionRepository> mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
 
             Option option = new Option { Id = 1, Text = new String('B', 201) };
-            this._mockRepository.Setup(s => s.Update(option))
+            mockRepository.Setup(s => s.Update(option))
                 .Throws(new ArgumentOutOfRangeException(nameof(option.Text)));
 
-            OptionService service = new OptionService(this._mockRepository.Object);
+            OptionService service = new OptionService(mockRepository.Object);
 
             Option optionToUpdate = new Option { Id = 1, Text = new String('B', 201) };
             ArgumentOutOfRangeException ex = Assert.Throws<ArgumentOutOfRangeException>(() => service.Update(optionToUpdate));
             Assert.NotNull(ex);
             Assert.Equal(nameof(option.Text), ex.ParamName);
 
-            this._mockRepository.Verify(m => m.Update(It.IsAny<Option>()), Times.Once());
+            mockRepository.Verify(m => m.Update(It.IsAny<Option>()), Times.Once());
         }
 
         [Fact]
         public void Update_Option_Success()
         {
-            this._mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
+            Mock<IOptionRepository> mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
 
-            this._mockRepository.Setup(s => s.Update(new Option { Id = 1, Text = "Updated" }))
+            mockRepository.Setup(s => s.Update(new Option { Id = 1, Text = "Updated" }))
                 .Callback<Option>(o => o.Text = "Updated");
 
-            OptionService service = new OptionService(this._mockRepository.Object);
+            OptionService service = new OptionService(mockRepository.Object);
 
             var expected = new Option { Id = 1, Text = "Updated" };
             var actual = service.Update(new Option { Id = 1, Text = "Updated" });
             Assert.NotNull(actual);
             Assert.Equal(expected, actual);
 
-            this._mockRepository.Verify(m => m.Update(It.IsAny<Option>()), Times.Once());
+            mockRepository.Verify(m => m.Update(It.IsAny<Option>()), Times.Once());
         }
 
         [Fact]
         public void Delete_Option_Not_Found_Error()
         {
-            this._mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
+            Mock<IOptionRepository> mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
 
-            this._mockRepository.Setup(s => s.Delete(666))
+            mockRepository.Setup(s => s.Delete(666))
                 .Throws(new DbUpdateException("The current option does not exists.", new Exception()));
 
-            OptionService service = new OptionService(this._mockRepository.Object);
+            OptionService service = new OptionService(mockRepository.Object);
 
             DbUpdateException ex = Assert.Throws<DbUpdateException>(() => service.Delete(666));
 
             Assert.NotNull(ex);
             Assert.Equal("The current option does not exists.", ex.Message);
 
-            this._mockRepository.Verify(m => m.Delete(It.IsAny<int>()), Times.Once());
+            mockRepository.Verify(m => m.Delete(It.IsAny<int>()), Times.Once());
         }
 
         [Fact]
         public void Delete_Option_Success()
         {
-            this._mockRepository = new Mock<IOptionRepository>(MockBehavior.Loose);
+            Mock<IOptionRepository> mockRepository = new Mock<IOptionRepository>(MockBehavior.Loose);
 
-            this._mockRepository.Setup(s => s.Delete(1));
+            mockRepository.Setup(s => s.Delete(1));
 
-            OptionService service = new OptionService(this._mockRepository.Object);
+            OptionService service = new OptionService(mockRepository.Object);
 
             service.Delete(1);
 
-            this._mockRepository.Verify(m => m.Delete(It.IsAny<int>()), Times.Once());
+            mockRepository.Verify(m => m.Delete(It.IsAny<int>()), Times.Once());
         }
     }
 }

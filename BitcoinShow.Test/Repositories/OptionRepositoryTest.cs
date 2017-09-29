@@ -88,7 +88,7 @@ namespace BitcoinShow.Test.Repositories
                     .UseInMemoryDatabase(System.Guid.NewGuid().ToString())
                     .Options;
             var context = new BitcoinShowDBContext(options);
-            var expected = new Option() { Text = "New option" };
+            var expected = new Option { Text = "New option" };
             context.Options.Add(expected);
             context.SaveChanges();
             OptionRepository repository = new OptionRepository(context);
@@ -105,7 +105,7 @@ namespace BitcoinShow.Test.Repositories
                 .UseInMemoryDatabase(System.Guid.NewGuid().ToString())
                 .Options;
             var context = new BitcoinShowDBContext(options);
-            context.Options.Add(new Option() { Text = "New option" });
+            context.Options.Add(new Option { Text = "New option" });
             context.SaveChanges();
 
             OptionRepository repository = new OptionRepository(context);
@@ -146,7 +146,7 @@ namespace BitcoinShow.Test.Repositories
                 .UseInMemoryDatabase(System.Guid.NewGuid().ToString())
                 .Options;
             var context = new BitcoinShowDBContext(options);
-            var newOption = new Option() { Text = "New option" };
+            var newOption = new Option { Text = "New option" };
             context.Options.Add(newOption);
             context.SaveChanges();
 
@@ -169,7 +169,7 @@ namespace BitcoinShow.Test.Repositories
                .UseInMemoryDatabase(System.Guid.NewGuid().ToString())
                .Options;
             var context = new BitcoinShowDBContext(options);
-            var newOption = new Option() { Text = "New option" };
+            var newOption = new Option { Text = "New option" };
             context.Options.Add(newOption);
             context.SaveChanges();
 
