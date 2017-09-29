@@ -3,7 +3,6 @@ branches:
   only:
   - develop
   - master
-  - 3-feature
 image: Visual Studio 2017
 configuration: Release
 dotnet_csproj:
