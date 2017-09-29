@@ -49,6 +49,7 @@ namespace BitcoinShow.Web.Repositories
                 throw new DbUpdateException("The current option does not exists.", new Exception());
             }
             _context.Options.Remove(optionToRemove);
+            _context.SaveChanges();
         }
 
         public Option Get(int id)
@@ -85,6 +86,7 @@ namespace BitcoinShow.Web.Repositories
             {
                 actualOption.Text = option.Text;
                 _context.Options.Update(actualOption);
+                _context.SaveChanges();
                 option = actualOption;
             }
         }
