@@ -48,7 +48,7 @@ namespace BitcoinShow.Web.Repositories
             var optionToRemove = _context.Options.Find(id);
             if (optionToRemove == null)
             {
-                throw new DbUpdateException("The current option does not exists.", new NullReferenceException());
+                throw new DbUpdateException("The current option does not exists.", new ArgumentNullException());
             }
             _context.Options.Remove(optionToRemove);
             _context.SaveChanges();
@@ -84,7 +84,7 @@ namespace BitcoinShow.Web.Repositories
             var actualOption = _context.Options.Find(option.Id);
             if (actualOption == null)
             {
-                throw new DbUpdateException("The current option does not exists.", new NullReferenceException());
+                throw new DbUpdateException("The current option does not exists.", new ArgumentNullException());
             }
             else
             {

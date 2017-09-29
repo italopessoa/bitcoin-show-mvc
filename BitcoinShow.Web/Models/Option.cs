@@ -42,7 +42,9 @@ namespace BitcoinShow.Web.Models
                 int hash = 17;
                 hash = hash * 23 + Id.GetHashCode();
                 if (!string.IsNullOrEmpty(Text))
+                {
                     hash = hash * 23 + Text.GetHashCode();
+                }
                 return hash;
             }
         }
