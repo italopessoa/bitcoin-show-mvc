@@ -32,14 +32,13 @@ namespace BitcoinShow.Web.Models
 
         public override bool Equals(object obj)
         {
-            if (obj == null) return false;
-            if (!(obj is Option)) return false;
-
             if (obj == null || GetType() != obj.GetType())
+            {
                 return false;
+            }
 
             Option option = (Option)obj;
-            return (Id == option.Id) 
+            return (Id == option.Id)
                 && (!String.IsNullOrEmpty(Text) ? Text.Equals(option.Text) : String.IsNullOrEmpty(option.Text));
         }
 

@@ -11,7 +11,7 @@ namespace BitcoinShow.Web.Repositories
 {
     public class OptionRepository : IOptionRepository
     {
-        private BitcoinShowDBContext _context;
+        private readonly BitcoinShowDBContext _context;
         public OptionRepository(BitcoinShowDBContext context)
         {
             _context = context;
@@ -19,7 +19,9 @@ namespace BitcoinShow.Web.Repositories
         public void Add(Option newOption)
         {
             if (string.IsNullOrEmpty(newOption.Text))
+            {
                 throw new ArgumentNullException(nameof(newOption.Text));
+            }
 
             List<PropertyInfo> props = typeof(Option)
                 .GetProperties()
@@ -60,7 +62,9 @@ namespace BitcoinShow.Web.Repositories
         public void Update(Option option)
         {
             if (string.IsNullOrEmpty(option.Text))
+            {
                 throw new ArgumentNullException(nameof(option.Text));
+            }
 
             List<PropertyInfo> props = typeof(Option)
                 .GetProperties()
