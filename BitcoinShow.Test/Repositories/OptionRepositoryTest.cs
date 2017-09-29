@@ -57,10 +57,6 @@ namespace BitcoinShow.Test.Repositories
             var context2 = new BitcoinShowDBContext(options2);
             OptionRepository repository = new OptionRepository(context2);
 
-            // Option expected = new Option();
-            // expected.Id = 1;
-            // expected.Text = text;
-
             Option actual = new Option();
             actual.Text = text;
 

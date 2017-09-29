@@ -24,7 +24,7 @@ namespace BitcoinShow.Web
 {
     public class Startup
     {
-        private Container container = new Container();
+        private readonly Container container = new Container();
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;

@@ -11,13 +11,6 @@ namespace BitcoinShow.Web.Models
     public class Option
     {
         /// <summary>
-        ///     Default constructor
-        /// </summary>
-        public Option()
-        {
-        }
-
-        /// <summary>
         ///     Option Id
         /// </summary>
         [Key]
