@@ -5,7 +5,7 @@ namespace BitcoinShow.Web.Models
 {
     public class QuestionLevel
     {
-        [Key,DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
         public string Name { get; set; }
