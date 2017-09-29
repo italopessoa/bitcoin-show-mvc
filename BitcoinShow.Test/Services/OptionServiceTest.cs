@@ -152,11 +152,11 @@ namespace BitcoinShow.Test.Services
 
             Option option666 = new Option { Id = 666, Text = "new text. 666" };
             mockRepository.Setup(s => s.Update(option666))
-                .Throws(new DbUpdateException("The current option does not exists.", new Exception()));
+                .Throws(new DbUpdateException("The current option does not exists.", new NullReferenceException()));
 
             Option option = new Option { Text = "new text. option without id" };
             mockRepository.Setup(s => s.Update(option))
-                .Throws(new DbUpdateException("The current option does not exists.", new Exception()));
+                .Throws(new DbUpdateException("The current option does not exists.", new NullReferenceException()));
 
             OptionService service = new OptionService(mockRepository.Object);
 
@@ -216,7 +216,7 @@ namespace BitcoinShow.Test.Services
             Mock<IOptionRepository> mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
 
             mockRepository.Setup(s => s.Delete(666))
-                .Throws(new DbUpdateException("The current option does not exists.", new Exception()));
+                .Throws(new DbUpdateException("The current option does not exists.", new NullReferenceException()));
 
             OptionService service = new OptionService(mockRepository.Object);
 

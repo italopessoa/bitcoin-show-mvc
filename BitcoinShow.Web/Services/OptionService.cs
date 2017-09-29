@@ -5,7 +5,7 @@ namespace BitcoinShow.Web.Services
 {
     public class OptionService : IOptionService
     {
-        Repositories.Interface.IOptionRepository _repository;
+        private readonly Repositories.Interface.IOptionRepository _repository;
         public OptionService(Repositories.Interface.IOptionRepository repository)
         {
             _repository = repository;
@@ -13,7 +13,7 @@ namespace BitcoinShow.Web.Services
 
         public object Add(string text)
         {
-            var newOption = new Option() { Text = text };
+            var newOption = new Option { Text = text };
             _repository.Add(newOption);
             return newOption;
         }
