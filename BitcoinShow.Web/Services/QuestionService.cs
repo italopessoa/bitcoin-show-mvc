@@ -15,7 +15,7 @@ namespace BitcoinShow.Web.Services
 
         public void Add(Question question)
         {
-            _repository.Add(question);            
+            throw new System.NotImplementedException();
         }
 
         public List<Question> GetAll()
@@ -23,12 +23,7 @@ namespace BitcoinShow.Web.Services
             throw new System.NotImplementedException();
         }
 
-        public Question GetById(int id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Question GetByLevel(QuestionLevelEnum level)
+        public Question Get(int id)
         {
             throw new System.NotImplementedException();
         }

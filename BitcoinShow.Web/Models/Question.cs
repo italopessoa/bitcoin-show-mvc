@@ -12,6 +12,12 @@ namespace BitcoinShow.Web.Models
     public class Question
     {
         /// <summary>
+        ///     Default constructor
+        /// </summary>
+        public Question()
+        {
+        }
+        /// <summary>
         ///     Constructor
         /// </summary> 
         /// <param name="title"> Question title. </param>
@@ -23,7 +29,7 @@ namespace BitcoinShow.Web.Models
             this.Answer = answer;
             this.Options = options;
         }
-        
+
         /// <summary>
         ///     Question Id
         /// </summary>

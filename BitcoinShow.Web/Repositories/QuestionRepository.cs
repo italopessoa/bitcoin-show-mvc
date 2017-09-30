@@ -16,8 +16,7 @@ namespace BitcoinShow.Web.Repositories
 
         public void Add(Question question)
         {
-             _context.Add (question);
-             _context.SaveChanges();
+            throw new System.NotImplementedException();
         }
         
         public void Delete(int id)
@@ -30,12 +29,7 @@ namespace BitcoinShow.Web.Repositories
             throw new System.NotImplementedException();
         }
 
-        public Question GetById(int id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Question GetByLevel(QuestionLevelEnum level)
+        public Question Get(int id)
         {
             throw new System.NotImplementedException();
         }
