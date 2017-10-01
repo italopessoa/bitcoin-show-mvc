@@ -5,7 +5,6 @@ using BitcoinShow.Web.Repositories;
 using BitcoinShow.Web.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using Ploeh.AutoFixture.Xunit2;
 using Xunit;
 
 namespace BitcoinShow.Test.Repositories

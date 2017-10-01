@@ -5,7 +5,6 @@ using BitcoinShow.Web.Repositories.Interface;
 using BitcoinShow.Web.Services;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using Ploeh.AutoFixture.Xunit2;
 using Xunit;
 
 
@@ -60,9 +59,10 @@ namespace BitcoinShow.Test.Services
             mockRepository.Verify(m => m.Add(It.IsAny<Option>()), Times.Once());
         }
 
-        [Theory, AutoData]
-        public void Add_Option_Success(string text)
+        [Fact]
+        public void Add_Option_Success()
         {
+            string text = "Add_Option_Success";
             Mock<IOptionRepository> mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
 
             Option newOption = new Option();
