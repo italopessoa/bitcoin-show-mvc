@@ -28,7 +28,7 @@ namespace BitcoinShow.Test.Services
         }
 
         [Fact]
-        public void Add_Question_Without_Title_Greater_Than_Max_Error()
+        public void Add_Question_Wit_Title_Greater_Than_Max_Error()
         {
             Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
             Question newQuestion = new Question();
@@ -115,6 +115,52 @@ namespace BitcoinShow.Test.Services
             Assert.Equal("The options list does not contain the current Answer object.", ex.Message);
 
             mockRepository.Verify(m =>m.Add(It.IsAny<Question>()), Times.Once());
+        }
+
+        [Fact]
+        public void Add_Question_Success()
+        {
+            List<Option> options = new List<Option>
+            {
+                new Option {Id = 1, Text = "Option A"},
+                new Option {Id = 2, Text = "Option B"},
+                new Option {Id = 3, Text = "Option C"},
+                new Option {Id = 4, Text = "Option D"}
+            };
+            Option answer = options[2];
+            Question newQuestion = new Question("What was the score of the game?", answer, options);
+
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+                mockRepository.Setup(s => s.Add(newQuestion))
+                .Callback<Question>(q => {
+                    q.Id = 1;
+                    q.Options.ForEach(o => {
+                        o.QuestionId = q.Id;
+                        o.Question = q;
+                    });
+                });
+
+            Question expectedQuestion = new Question();
+            List<Option> expectedOptions = new List<Option>
+            {
+                new Option {Id = 1, Text = "Option A", QuestionId = expectedQuestion.Id, Question = expectedQuestion},
+                new Option {Id = 2, Text = "Option B", QuestionId = expectedQuestion.Id, Question = expectedQuestion},
+                new Option {Id = 3, Text = "Option C", QuestionId = expectedQuestion.Id, Question = expectedQuestion},
+                new Option {Id = 4, Text = "Option D", QuestionId = expectedQuestion.Id, Question = expectedQuestion}
+            };
+
+            Option expectedAnswer = options[2];
+            expectedQuestion.Title = "What was the score of the game?";
+            expectedQuestion.Answer = expectedAnswer;
+            expectedQuestion.Options = expectedOptions;
+            expectedQuestion.Id = 1;
+
+            QuestionService service = new QuestionService(mockRepository.Object);
+            service.Add(newQuestion);
+
+            Assert.Equal(expectedQuestion, newQuestion);
+
+            mockRepository.Verify(m => m.Add(It.IsAny<Question>()),Times.Once());
         }
     }
 }
