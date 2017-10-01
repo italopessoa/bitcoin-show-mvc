@@ -15,17 +15,17 @@ namespace BitcoinShow.Web.Services
 
         public void Add(Question question)
         {
-            throw new System.NotImplementedException();
+            _repository.Add(question);
         }
 
         public List<Question> GetAll()
         {
-            throw new System.NotImplementedException();
+            return _repository.GetAll();
         }
 
         public Question Get(int id)
         {
-            throw new System.NotImplementedException();
+            return _repository.Get(id);
         }
 
         public void Delete(int id)
