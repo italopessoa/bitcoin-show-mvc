@@ -8,7 +8,7 @@ namespace BitcoinShow.Web.Models
     /// <summary>
     ///       Question
     /// </summary>
-    [Table("Question", Schema = "bs")]
+    [Table("Question")]
     public class Question
     {
         /// <summary>

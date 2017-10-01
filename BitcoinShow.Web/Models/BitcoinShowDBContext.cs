@@ -20,6 +20,14 @@ namespace BitcoinShow.Web.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Option>()
+                .HasOne(p => p.Question)
+                .WithMany(b => b.Options)
+                .HasForeignKey(p => p.QuestionId)
+                .OnDelete(DeleteBehavior.Restrict);
+            
+            modelBuilder.Entity<Question>()
+                .HasMany(p => p.Options);
         }
 
         #region Sets
