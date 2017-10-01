@@ -35,7 +35,7 @@ namespace BitcoinShow.Web.Services
 
         public void Update(Question quesiton)
         {
-            throw new System.NotImplementedException();
+            _repository.Update(quesiton);
         }
     }
 }

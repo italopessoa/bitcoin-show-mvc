@@ -6,6 +6,7 @@ using System;
 using BitcoinShow.Web.Services;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace BitcoinShow.Test.Services
 {
@@ -250,6 +251,110 @@ namespace BitcoinShow.Test.Services
             mockRepository.Verify(m => m.Delete(It.IsAny<int>()), Times.Once());
         }
 
+
+        [Fact]
+        public void Update_Question_Without_Title_Error()
+        {
+            Question question = new Question
+            {
+                Id = 1,
+                Title = string.Empty,
+            };
+
+            List<Option> options = this.RandomOptions(4, question).ToList();
+            question.Answer = options[0];
+            question.Options = options;
+
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.Update(question))
+                .Throws(new ArgumentNullException(nameof(question.Title)));
+
+            QuestionService service = new QuestionService(mockRepository.Object);
+
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => service.Update(question));
+
+            Assert.NotNull(ex);
+            Assert.Equal(nameof(question.Title), ex.ParamName);
+            mockRepository.Verify(m => m.Update(It.IsAny<Question>()), Times.Once());
+        }
+
+        [Fact]
+        public void Update_Question_Without_Title_Greater_Than_Max_Error()
+        {
+            Question question = new Question
+            {
+                Id = 1,
+                Title = new String('a',201),
+            };
+
+            List<Option> options = this.RandomOptions(4, question).ToList();
+            question.Answer = options[0];
+            question.Options = options;
+
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.Update(question))
+                .Throws(new ArgumentOutOfRangeException(nameof(question.Title)));
+
+            QuestionService service = new QuestionService(mockRepository.Object);
+
+            ArgumentOutOfRangeException ex = Assert.Throws<ArgumentOutOfRangeException>(() => service.Update(question));
+
+            Assert.NotNull(ex);
+            Assert.Equal(nameof(question.Title), ex.ParamName);
+            mockRepository.Verify(m => m.Update(It.IsAny<Question>()), Times.Once());
+        }
+
+        [Fact]
+        public void Update_Question_Without_Answer_Error()
+        {
+            Question question = new Question
+            {
+                Id = 1,
+                Title = Guid.NewGuid().ToString(),
+            };
+            
+            List<Option> options = this.RandomOptions(4, question).ToList();
+            question.Options = options;
+
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.Update(question))
+                .Throws(new ArgumentNullException(nameof(question.Answer)));
+
+            QuestionService service = new QuestionService(mockRepository.Object);
+
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => service.Update(question));
+
+            Assert.NotNull(ex);
+            Assert.Equal(nameof(question.Answer), ex.ParamName);
+            mockRepository.Verify(m => m.Update(It.IsAny<Question>()), Times.Once());
+        }
+
+        [Fact]
+        public void Update_Question_With_Answer_Out_Of_Options_Error()
+        {
+            Question question = new Question
+            {
+                Id = 1,
+                Title = Guid.NewGuid().ToString()
+            };
+            
+            List<Option> options = this.RandomOptions(4, question).ToList();
+            question.Options = options;
+            question.Answer = new Option { Id = 10, Text = "Invalid option", Question = question, QuestionId = question.Id };
+
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.Update(question))
+                .Throws(new ArgumentException("The options list does not contain the current Answer object."));
+
+            QuestionService service = new QuestionService(mockRepository.Object);
+
+            ArgumentException ex = Assert.Throws<ArgumentException>(() => service.Update(question));
+
+            Assert.NotNull(ex);
+            Assert.Equal("The options list does not contain the current Answer object.", ex.Message);
+            mockRepository.Verify(m => m.Update(It.IsAny<Question>()), Times.Once());
+        }
+
         private List<Question> RandomQuestions(int n)
         {
             List<Question> questions = new List<Question>();
@@ -276,6 +381,19 @@ namespace BitcoinShow.Test.Services
             }
 
             return questions;
+        }
+
+        private IEnumerable<Option> RandomOptions(int nOptions, Question question)
+        {
+            for (int i = 0; i < nOptions; i++)
+            {
+                yield return new Option 
+                { 
+                    Id = i,
+                    Question = question,
+                    QuestionId = question.Id
+                };
+            }
         }
     }
 }
