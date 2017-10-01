@@ -152,23 +152,23 @@ namespace BitcoinShow.Test.Services
 
             Option option666 = new Option { Id = 666, Text = "new text. 666" };
             mockRepository.Setup(s => s.Update(option666))
-                .Throws(new DbUpdateException("The current option does not exists.", new NullReferenceException()));
+                .Throws(new DbUpdateException("The current option does not exist.", new NullReferenceException()));
 
             Option option = new Option { Text = "new text. option without id" };
             mockRepository.Setup(s => s.Update(option))
-                .Throws(new DbUpdateException("The current option does not exists.", new NullReferenceException()));
+                .Throws(new DbUpdateException("The current option does not exist.", new NullReferenceException()));
 
             OptionService service = new OptionService(mockRepository.Object);
 
             Option optionToUpdate = new Option { Id = 666, Text = "new text. 666" };
             DbUpdateException ex = Assert.Throws<DbUpdateException>(() => service.Update(optionToUpdate));
             Assert.NotNull(ex);
-            Assert.Equal("The current option does not exists.", ex.Message);
+            Assert.Equal("The current option does not exist.", ex.Message);
 
             optionToUpdate = new Option { Text = "new text. option without id" };
             ex = Assert.Throws<DbUpdateException>(() => service.Update(optionToUpdate));
             Assert.NotNull(ex);
-            Assert.Equal("The current option does not exists.", ex.Message);
+            Assert.Equal("The current option does not exist.", ex.Message);
 
             mockRepository.Verify(m => m.Update(It.IsAny<Option>()), Times.AtLeast(2));
         }
@@ -216,14 +216,14 @@ namespace BitcoinShow.Test.Services
             Mock<IOptionRepository> mockRepository = new Mock<IOptionRepository>(MockBehavior.Strict);
 
             mockRepository.Setup(s => s.Delete(666))
-                .Throws(new DbUpdateException("The current option does not exists.", new NullReferenceException()));
+                .Throws(new DbUpdateException("The current option does not exist.", new NullReferenceException()));
 
             OptionService service = new OptionService(mockRepository.Object);
 
             DbUpdateException ex = Assert.Throws<DbUpdateException>(() => service.Delete(666));
 
             Assert.NotNull(ex);
-            Assert.Equal("The current option does not exists.", ex.Message);
+            Assert.Equal("The current option does not exist.", ex.Message);
 
             mockRepository.Verify(m => m.Delete(It.IsAny<int>()), Times.Once());
         }

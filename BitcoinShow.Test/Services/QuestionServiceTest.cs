@@ -5,6 +5,7 @@ using BitcoinShow.Web.Models;
 using System;
 using BitcoinShow.Web.Services;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace BitcoinShow.Test.Services
 {
@@ -218,6 +219,35 @@ namespace BitcoinShow.Test.Services
             Assert.Equal(expected, actual);
 
             mockRepository.Verify(m => m.Get(It.IsAny<int>()), Times.Once());
+        }
+
+        [Fact]
+        public void Delete_Question_Not_Found_Error()
+        {
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.Delete(1))
+                .Throws(new DbUpdateException("The current Question does not exist.", new NullReferenceException()));
+
+            QuestionService service = new QuestionService(mockRepository.Object);
+
+            DbUpdateException ex  = Assert.Throws<DbUpdateException>(() => service.Delete(1));
+
+            Assert.NotNull(ex);
+            Assert.Equal("The current Question does not exist.", ex.Message);
+
+            mockRepository.Verify(m => m.Delete(It.IsAny<int>()), Times.Once());
+        }
+
+        [Fact]
+        public void Delete_Question_Success()
+        {
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.Delete(1));
+
+            QuestionService service = new QuestionService(mockRepository.Object);
+
+            service.Delete(1);
+            mockRepository.Verify(m => m.Delete(It.IsAny<int>()), Times.Once());
         }
 
         private List<Question> RandomQuestions(int n)

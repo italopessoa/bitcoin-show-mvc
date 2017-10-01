@@ -30,7 +30,7 @@ namespace BitcoinShow.Web.Services
 
         public void Delete(int id)
         {
-            throw new System.NotImplementedException();
+            _repository.Delete(id);
         }
 
         public void Update(Question quesiton)
