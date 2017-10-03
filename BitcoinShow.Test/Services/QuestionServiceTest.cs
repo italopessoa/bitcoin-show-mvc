@@ -53,12 +53,12 @@ namespace BitcoinShow.Test.Services
 
             Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
             mockRepository.Setup(s => s.Add(newQuestion))
-                .Throws(new ArgumentNullException(nameof(newQuestion.Answer)));
+                .Throws(new ArgumentException("You must provide Answer navigation property value."));
 
             QuestionService service = new QuestionService(mockRepository.Object);
             
-            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => service.Add(newQuestion));
-            Assert.Equal(nameof(newQuestion.Answer), ex.ParamName);
+            ArgumentException ex = Assert.Throws<ArgumentException>(() => service.Add(newQuestion));
+            Assert.Equal("You must provide Answer navigation property value.", ex.Message);
             
             mockRepository.Verify(m =>m.Add(It.IsAny<Question>()), Times.Once());
         }
@@ -75,18 +75,18 @@ namespace BitcoinShow.Test.Services
 
             Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
             mockRepository.Setup(s => s.Add(newQuestionNullOptions))
-                .Throws(new ArgumentException("A question needs options", nameof(newQuestionNullOptions.Options)));
+                .Throws(new ArgumentException("At least two options are required.", nameof(newQuestionNullOptions.Options)));
 
             mockRepository.Setup(s => s.Add(newQuestionZeroOptions))
-                .Throws(new ArgumentException("A question needs options", nameof(newQuestionZeroOptions.Options)));
+                .Throws(new ArgumentException("At least two options are required.", nameof(newQuestionZeroOptions.Options)));
 
             QuestionService service = new QuestionService(mockRepository.Object);
             
             ArgumentException ex = Assert.Throws<ArgumentException>(() => service.Add(newQuestionNullOptions));
-            Assert.Equal(nameof(newQuestionNullOptions.Options), ex.ParamName);
+            Assert.Equal("At least two options are required.", ex.ParamName);
 
             ex = Assert.Throws<ArgumentException>(() => service.Add(newQuestionZeroOptions));
-            Assert.Equal(nameof(newQuestionZeroOptions.Options), ex.ParamName);
+            Assert.Equal("At least two options are required.", ex.ParamName);
 
             mockRepository.Verify(m =>m.Add(It.IsAny<Question>()), Times.AtLeast(2));
         }
