@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using BitcoinShow.Web.Models;
 using BitcoinShow.Web.Repositories;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Moq;
 using Xunit;
+using System.Linq;
 
 namespace BitcoinShow.Test.Repositories
 {
@@ -34,7 +36,6 @@ namespace BitcoinShow.Test.Repositories
             ArgumentOutOfRangeException ex = Assert.Throws<ArgumentOutOfRangeException>(() => repository.Add(option));
             Assert.NotNull(ex);
             Assert.Equal(nameof(option.Title), ex.ParamName);
-            Assert.Equal("The title has to many characters.", ex.Message);
         }
 
         [Fact]
@@ -46,57 +47,60 @@ namespace BitcoinShow.Test.Repositories
             Question option = new Question();
             option.Title = "How many times do you test your code?";
             
-            ArgumentException ex = Assert.Throws<ArgumentException>(() => repository.Add(option));
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => repository.Add(option));
             Assert.NotNull(ex);
-            Assert.Equal(nameof(option.Title), ex.ParamName);
-            Assert.Equal("You must provide Answer navigation property value.", ex.Message);
-        }
-
-        [Fact]
-        public void Add_Question_Without_Options_Error()
-        {
-            BitcoinShowDBContext context = DbContextFactory.GetContext();
-            QuestionRepository repository = new QuestionRepository(context);
-
-            Question newQuestionNullOptions = new Question();
-            newQuestionNullOptions.Title = "How many times do you test your code?";
-            newQuestionNullOptions.Answer = new Option() {Id = 1,Text= "Option 1"};
-
-            Question newQuestionZeroOptions = new Question();
-            newQuestionZeroOptions.Title = "How many times do you test your code?";
-            newQuestionZeroOptions.Answer = new Option() {Id = 1,Text= "Option 1"};
-            newQuestionZeroOptions.Options = new List<Option>();
-
-            ArgumentException ex = Assert.Throws<ArgumentException>(() => repository.Add(newQuestionNullOptions));
-            Assert.NotNull(ex);
-            Assert.Equal("At least two options are required.", ex.Message);
-        }
-
-        [Fact]
-        public void Add_Question_With_Answer_Out_Of_Options_Error()
-        {
-            BitcoinShowDBContext context = DbContextFactory.GetContext();
-            QuestionRepository repository = new QuestionRepository(context);
-
-            Option answer = new Option { Id = 5, Text = "Invalid option" };
-            
-            List<Option> options = new List<Option>
-            {
-                new Option {Id = 1, Text = "Option A"},
-                new Option {Id = 2, Text = "Option B"},
-                new Option {Id = 3, Text = "Option C"},
-                new Option {Id = 4, Text = "Option D"}
-            };
-
-            Question newQuestion = new Question("question",answer,options);
-            
-            ArgumentException ex = Assert.Throws<ArgumentException>(() => repository.Add(newQuestion));
-            Assert.Equal("The options list does not contain the current Answer object.", ex.Message);
+            Assert.Equal(nameof(option.Answer), ex.ParamName);
         }
 
         [Fact]
         public void Add_Question_Success()
         {
+            BitcoinShowDBContext context = DbContextFactory.GetContext();
+            QuestionRepository repository = new QuestionRepository(context);
+
+            var options = RandomOptions(4).ToList();
+            options.ForEach(o => 
+            {
+                context.Options.Add(o);
+            });
+            context.SaveChanges();
+
+            var expectedAnswer = context.Options.Find(2);
+
+            Question expectedQuestion = new Question();
+            expectedQuestion.Id = 1;
+            expectedQuestion.Title = "Test question";
+            expectedQuestion.Answer = expectedAnswer;
+
+            Question question = new Question();
+            question.Answer = context.Options.Find(2);
+            question.Title = "Test question";
+
+            repository.Add(question);
+            Assert.Equal(expectedQuestion, question);
+        }
+
+        private IEnumerable<Option> RandomOptions(int nOptions)
+        {
+            for (int i = 0; i < nOptions; i++)
+            {
+                yield return new Option 
+                { 
+                    Text = $"Random Option {i + 1}"
+                };
+            }
+        }
+
+        private IEnumerable<Option> RandomOptionsWithId(int nOptions)
+        {
+            for (int i = 0; i < nOptions; i++)
+            {
+                yield return new Option 
+                { 
+                    Id = i + 1,
+                    Text = $"Random Option {i + 1}"
+                };
+            }
         }
     }
 }

@@ -65,15 +65,17 @@ namespace BitcoinShow.Web.Models
             Question question = (Question)obj;
 
             if((Options == null && question.Options != null)
-                || (Options != null && question.Options == null)
-                || (Options.Count != question.Options.Count)
-                )
+                || (Options != null && question.Options == null))
             {
                 return false;
             }
-
+            
             if(Options != null)
             {
+                if (Options.Count != question.Options.Count)
+                {
+                    return false;
+                }
                 for (int i = 0; i < Options.Count; i++)
                 {
                     if(!Options[i].Equals(question.Options[i]))
