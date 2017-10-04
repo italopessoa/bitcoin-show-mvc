@@ -11,9 +11,10 @@ using System;
 namespace BitcoinShow.Web.Migrations
 {
     [DbContext(typeof(BitcoinShowDBContext))]
-    partial class BitcoinShowDBContextModelSnapshot : ModelSnapshot
+    [Migration("20171001144043_Add_Question_and_QuestionFK_to_Option")]
+    partial class Add_Question_and_QuestionFK_to_Option
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

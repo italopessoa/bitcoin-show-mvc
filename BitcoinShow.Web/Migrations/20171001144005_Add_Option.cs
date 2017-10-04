@@ -9,12 +9,8 @@ namespace BitcoinShow.Web.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.EnsureSchema(
-                name: "bs");
-
             migrationBuilder.CreateTable(
                 name: "Option",
-                schema: "bs",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -30,8 +26,7 @@ namespace BitcoinShow.Web.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Option",
-                schema: "bs");
+                name: "Option");
         }
     }
 }

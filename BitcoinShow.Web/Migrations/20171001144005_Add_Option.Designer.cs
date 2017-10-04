@@ -11,7 +11,7 @@ using System;
 namespace BitcoinShow.Web.Migrations
 {
     [DbContext(typeof(BitcoinShowDBContext))]
-    [Migration("20170928235324_Add_Option")]
+    [Migration("20171001144005_Add_Option")]
     partial class Add_Option
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,7 +32,7 @@ namespace BitcoinShow.Web.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Option","bs");
+                    b.ToTable("Option");
                 });
 #pragma warning restore 612, 618
         }

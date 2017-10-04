@@ -7,7 +7,7 @@ namespace BitcoinShow.Web.Models
     /// <summary>
     ///     Entity that represents a Question option
     /// </summary>
-    [Table("Option", Schema = "bs")]
+    [Table("Option")]
     public class Option
     {
         /// <summary>
@@ -22,6 +22,9 @@ namespace BitcoinShow.Web.Models
         [Required(AllowEmptyStrings = false)]
         [MaxLength(200)]
         public string Text { get; set; }
+
+        public int? QuestionId { get; set; }
+        public Question Question { get; set; }
 
         public override bool Equals(object obj)
         {
