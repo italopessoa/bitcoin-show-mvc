@@ -56,7 +56,6 @@ namespace BitcoinShow.Test.Repositories
         public void Add_Question_Success()
         {
             BitcoinShowDBContext context = DbContextFactory.GetContext();
-            QuestionRepository repository = new QuestionRepository(context);
 
             var options = RandomOptions(4).ToList();
             options.ForEach(o => 
@@ -65,19 +64,81 @@ namespace BitcoinShow.Test.Repositories
             });
             context.SaveChanges();
 
-            var expectedAnswer = context.Options.Find(2);
-
-            Question expectedQuestion = new Question();
-            expectedQuestion.Id = 1;
-            expectedQuestion.Title = "Test question";
-            expectedQuestion.Answer = expectedAnswer;
-
+            QuestionRepository repository = new QuestionRepository(context);
             Question question = new Question();
-            question.Answer = context.Options.Find(2);
+            question.Answer = context.Options.First();
             question.Title = "Test question";
 
             repository.Add(question);
-            Assert.Equal(expectedQuestion, question);
+            Assert.True(question.Id > 0);
+        }
+
+        [Fact]
+        public void GetAll_Questions_Success()
+        {
+            BitcoinShowDBContext context = DbContextFactory.GetContext();
+            for (int i = 0; i < 1; i++)
+            {
+                context.Questions.Add(new Question
+                { 
+                    Title = $"Random Question {i + 1}",
+                    Answer = new Option() { Text = $"Random Option {i}"}
+                });
+            }
+            context.SaveChanges();
+
+            QuestionRepository repository = new QuestionRepository(context);
+
+            repository.GetAll().ForEach(q => 
+            {
+                Assert.NotNull(q);
+                Assert.True(q.Id > 0);
+                Assert.False(String.IsNullOrEmpty(q.Title));
+                Assert.NotNull(q.Answer);
+                Assert.True(q.Answer.Id > 0);
+                Assert.False(String.IsNullOrEmpty(q.Answer.Text));
+            });
+        }
+
+        [Fact]
+        public void Get_Question_Not_Found_Error()
+        {
+            BitcoinShowDBContext context = DbContextFactory.GetContext();
+            for (int i = 0; i < 10; i++)
+            {
+                context.Questions.Add(new Question
+                { 
+                    Title = $"Random Question {i + 1}",
+                    Answer = new Option() { Id = i, Text = $"Random Option {i}"}
+                });
+            }
+            context.SaveChanges();
+
+            QuestionRepository repository = new QuestionRepository(context);
+
+            Question actual = repository.Get(50);
+            Assert.Null(actual);
+        }
+
+        [Fact]
+        public void Get_Question_Success()
+        {
+            BitcoinShowDBContext context = DbContextFactory.GetContext();
+            for (int i = 0; i < 98; i++)
+            {
+                context.Questions.Add(new Question
+                { 
+                    Title = $"Random Question {i + 1}",
+                    Answer = new Option() { Id = i, Text = $"Random Option {i}"}
+                });
+            }
+            context.SaveChanges();
+
+            QuestionRepository repository = new QuestionRepository(context);
+
+            Question actual = repository.Get(50);
+            Assert.NotNull(actual);
+            Assert.NotNull(actual.Answer);
         }
 
         private IEnumerable<Option> RandomOptions(int nOptions)

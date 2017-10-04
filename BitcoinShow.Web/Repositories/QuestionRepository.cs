@@ -45,12 +45,12 @@ namespace BitcoinShow.Web.Repositories
 
         public List<Question> GetAll()
         {
-            throw new System.NotImplementedException();
+            return this._context.Questions.ToList();
         }
 
         public Question Get(int id)
         {
-            throw new System.NotImplementedException();
+            return this._context.Questions.Find(id);
         }
 
         public void Update(Question quesiton)
