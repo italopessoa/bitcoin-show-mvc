@@ -34,13 +34,22 @@ namespace BitcoinShow.Web.Repositories
                 throw new ArgumentNullException(nameof(question.Answer), "You must provide Answer navigation property value.");
             }
 
-            this._context.Add(question);
+            this._context.Questions.Add(question);
             this._context.SaveChanges();
         }
         
         public void Delete(int id)
         {
-            throw new System.NotImplementedException();
+            var question = this._context.Questions.Find(id);
+            if(question != null)
+            {
+                this._context.Questions.Remove(question);
+                this._context.SaveChanges();
+            }
+            else
+            {
+                throw new Exception("The current Question does not exist.");
+            }
         }
 
         public List<Question> GetAll()

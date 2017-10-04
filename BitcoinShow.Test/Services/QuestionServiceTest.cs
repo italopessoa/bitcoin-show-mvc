@@ -154,11 +154,11 @@ namespace BitcoinShow.Test.Services
         {
             Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
             mockRepository.Setup(s => s.Delete(1))
-                .Throws(new DbUpdateException("The current Question does not exist.", new NullReferenceException()));
+                .Throws(new Exception("The current Question does not exist."));//it actually should be DbUpdateConcurrencyException
 
             QuestionService service = new QuestionService(mockRepository.Object);
 
-            DbUpdateException ex  = Assert.Throws<DbUpdateException>(() => service.Delete(1));
+            Exception ex  = Assert.Throws<Exception>(() => service.Delete(1));
 
             Assert.NotNull(ex);
             Assert.Equal("The current Question does not exist.", ex.Message);

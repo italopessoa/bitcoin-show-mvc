@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Moq;
 using Xunit;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace BitcoinShow.Test.Repositories
 {
@@ -139,6 +140,34 @@ namespace BitcoinShow.Test.Repositories
             Question actual = repository.Get(50);
             Assert.NotNull(actual);
             Assert.NotNull(actual.Answer);
+        }
+
+        [Fact]
+        public void Delete_Question_Not_Found_Error()
+        {
+            BitcoinShowDBContext context = DbContextFactory.GetContext();
+
+            QuestionRepository repository = new QuestionRepository(context);
+            Exception ex = Assert.Throws<Exception>(() => repository.Delete(99999999));
+            Assert.NotNull(ex);
+            Assert.Equal("The current Question does not exist.", ex.Message);
+        }
+
+        [Fact]
+        public void Delete_Question_Success()
+        {
+            var question = new Question
+            {
+                Title = "Delete_Question_Success"
+            };
+            BitcoinShowDBContext context = DbContextFactory.GetContext();
+            context.Questions.Add(question);
+            context.SaveChanges();
+            int questionId = question.Id;
+
+            QuestionRepository repository = new QuestionRepository(context);
+            repository.Delete(questionId);
+            Assert.Null(context.Questions.Find(questionId));
         }
 
         private IEnumerable<Option> RandomOptions(int nOptions)
