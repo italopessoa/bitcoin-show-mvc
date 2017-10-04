@@ -85,7 +85,7 @@ namespace BitcoinShow.Web
             container.Register<IQuestionRepository, QuestionRepository>(Lifestyle.Scoped);
             container.Register<IOptionRepository, OptionRepository>(Lifestyle.Scoped);
             container.Register<IQuestionService, QuestionService>(Lifestyle.Scoped);
-            container.Register<IOptionService, IOptionService>(Lifestyle.Scoped);
+            container.Register<IOptionService, OptionService>(Lifestyle.Scoped);
 
             container.Register<BitcoinShowDBContext>(() =>
             {
