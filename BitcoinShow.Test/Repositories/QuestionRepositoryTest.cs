@@ -83,7 +83,7 @@ namespace BitcoinShow.Test.Repositories
                 context.Questions.Add(new Question
                 { 
                     Title = $"Random Question {i + 1}",
-                    Answer = new Option() { Text = $"Random Option {i}"}
+                    Answer = new Option { Text = $"Random Option {i}"}
                 });
             }
             context.SaveChanges();
@@ -110,7 +110,7 @@ namespace BitcoinShow.Test.Repositories
                 context.Questions.Add(new Question
                 { 
                     Title = $"Random Question {i + 1}",
-                    Answer = new Option() { Id = i, Text = $"Random Option {i}"}
+                    Answer = new Option { Id = i, Text = $"Random Option {i}"}
                 });
             }
             context.SaveChanges();
@@ -273,18 +273,6 @@ namespace BitcoinShow.Test.Repositories
             {
                 yield return new Option 
                 { 
-                    Text = $"Random Option {i + 1}"
-                };
-            }
-        }
-
-        private IEnumerable<Option> RandomOptionsWithId(int nOptions)
-        {
-            for (int i = 0; i < nOptions; i++)
-            {
-                yield return new Option 
-                { 
-                    Id = i + 1,
                     Text = $"Random Option {i + 1}"
                 };
             }

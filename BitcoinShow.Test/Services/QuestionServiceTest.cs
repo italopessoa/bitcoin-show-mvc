@@ -23,7 +23,7 @@ namespace BitcoinShow.Test.Services
             QuestionService service = new QuestionService(mockRepository.Object);
             
             ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => service.Add(newQuestion));
-            Assert.Equal(nameof(newQuestion.Title), (ex as ArgumentNullException).ParamName);
+            Assert.Equal(nameof(newQuestion.Title), ex.ParamName);
 
             mockRepository.Verify(m =>m.Add(It.IsAny<Question>()), Times.Once());
         }
