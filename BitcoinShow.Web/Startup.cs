@@ -24,7 +24,7 @@ namespace BitcoinShow.Web
 {
     public class Startup
     {
-        private Container container = new Container();
+        private readonly Container container = new Container();
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -74,7 +74,7 @@ namespace BitcoinShow.Web
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
-        
+
         private void InitializeContainer(IApplicationBuilder app)
         {
             // Add application presentation components:
@@ -82,24 +82,27 @@ namespace BitcoinShow.Web
             container.RegisterMvcViewComponents(app);
 
             // Add application services. For instance:
-            container.Register<IQuestionService, QuestionService>(Lifestyle.Scoped);
             container.Register<IQuestionRepository, QuestionRepository>(Lifestyle.Scoped);
+            container.Register<IOptionRepository, OptionRepository>(Lifestyle.Scoped);
+            container.Register<IQuestionService, QuestionService>(Lifestyle.Scoped);
+            container.Register<IOptionService, IOptionService>(Lifestyle.Scoped);
 
-            container.Register<BitcoinShowDBContext>(() => {
+            container.Register<BitcoinShowDBContext>(() =>
+            {
                 var cs = Configuration.GetConnectionString("SqlServer");
                 var options = new DbContextOptionsBuilder<BitcoinShowDBContext>()
                     .UseSqlServer(cs)
                     .Options;
-                
+
                 var context = new BitcoinShowDBContext(options);
                 context.Database.Migrate();
                 context.Database.EnsureCreated();
                 return context;
-            },Lifestyle.Scoped);
+            }, Lifestyle.Scoped);
 
             //Cross-wire ASP.NET services (if any). For instance:
             container.CrossWire<ILoggerFactory>(app);
-            
+
             container.Verify();
 
             // NOTE: Do prevent cross-wired instances as much as possible.

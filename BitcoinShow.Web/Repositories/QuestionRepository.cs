@@ -1,7 +1,8 @@
+using System;
+using System.Linq;
 using BitcoinShow.Web.Models;
 using BitcoinShow.Web.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace BitcoinShow.Web.Repositories
@@ -16,33 +17,66 @@ namespace BitcoinShow.Web.Repositories
 
         public void Add(Question question)
         {
-             _context.Add (question);
-             _context.SaveChanges();
+            if(question == null)
+            {
+                throw new ArgumentNullException("question");
+            }
+            if(string.IsNullOrEmpty(question.Title))
+            {
+                throw new ArgumentNullException(nameof(question.Title));
+            }
+            if(question.Title.Length > 200)
+            {
+                throw new ArgumentOutOfRangeException(nameof(question.Title), question.Title,"The title has too many characters.");
+            }
+            if(question.Answer == null)
+            {
+                throw new ArgumentNullException(nameof(question.Answer), "You must provide Answer navigation property value.");
+            }
+
+            this._context.Questions.Add(question);
+            this._context.SaveChanges();
         }
         
         public void Delete(int id)
         {
-            throw new System.NotImplementedException();
+            var question = this._context.Questions.Find(id);
+            if(question != null)
+            {
+                this._context.Questions.Remove(question);
+                this._context.SaveChanges();
+            }
+            else
+            {
+                throw new Exception("The current Question does not exist.");
+            }
         }
 
         public List<Question> GetAll()
         {
-            throw new System.NotImplementedException();
+            return this._context.Questions.ToList();
         }
 
-        public Question GetById(int id)
+        public Question Get(int id)
         {
-            throw new System.NotImplementedException();
+            return this._context.Questions.Find(id);
         }
 
-        public Question GetByLevel(QuestionLevelEnum level)
+        public void Update(Question question)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public void Update(Question quesiton)
-        {
-            throw new System.NotImplementedException();
+            if(string.IsNullOrEmpty(question.Title))
+            {
+                throw new ArgumentNullException(nameof(question.Title));
+            }
+            if(question.Title.Length > 200)
+            {
+                throw new ArgumentOutOfRangeException(nameof(question.Title), question.Title,"The title has too many characters.");
+            }
+            if(question.Answer == null)
+            {
+                throw new ArgumentNullException(nameof(question.Answer), "You must provide Answer navigation property value.");
+            }
+            this._context.Questions.Update(question);
         }
     }
 }

@@ -22,14 +22,7 @@ namespace BitcoinShow.Web.Repositories.Interface
         /// </summary>
         /// <param name="id"> Question Id. </param>
         /// <returns> The found Question. </returns>
-        Question GetById(int id);
-
-        /// <summary>
-        ///     Get random Question based on the its level.
-        /// </summary>
-        /// <param name="level"> Question level. </param>
-        /// <returns> The found Question. </returns>
-        Question GetByLevel(QuestionLevelEnum level);
+        Question Get(int id);
 
         /// <summary>
         ///     Delete question.

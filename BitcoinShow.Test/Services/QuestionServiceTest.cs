@@ -4,120 +4,323 @@ using BitcoinShow.Web.Repositories.Interface;
 using BitcoinShow.Web.Models;
 using System;
 using BitcoinShow.Web.Services;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace BitcoinShow.Test.Services
 {
     public class QuestionServiceTest
     {
-        private Mock<IQuestionRepository> _mockRepository;
-
         [Fact]
         public void Add_Question_Without_Title_Error()
         {
-            // Question newQuestion = new Question();
-            // this._mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
-            // this._mockRepository.Setup(s => s.Add(newQuestion))
-            //     .Throws(new ArgumentNullException(nameof(newQuestion.Title)));
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            Question newQuestion = new Question();
+            mockRepository.Setup(s => s.Add(newQuestion))
+                .Throws(new ArgumentNullException(nameof(newQuestion.Title)));
 
-            // QuestionService service = new QuestionService(_mockRepository.Object);
+            QuestionService service = new QuestionService(mockRepository.Object);
             
-            // ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => service.Add(newQuestion));
-            // Assert.Equal(nameof(newQuestion.Title), (ex as ArgumentNullException).ParamName);
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => service.Add(newQuestion));
+            Assert.Equal(nameof(newQuestion.Title), ex.ParamName);
+
+            mockRepository.Verify(m =>m.Add(It.IsAny<Question>()), Times.Once());
         }
 
         [Fact]
-        public void Add_Question_With_Empty_Title_Error()
+        public void Add_Question_Wit_Title_Greater_Than_Max_Error()
         {
-            // Question newQuestion = new Question();
-            // newQuestion.Title = "                                                     ";
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            Question newQuestion = new Question();
+            newQuestion.Title = new String('a',201);
+            mockRepository.Setup(s => s.Add(newQuestion))
+                .Throws(new ArgumentOutOfRangeException(nameof(newQuestion.Title)));
 
-            // this._mockRepository = new Mock<IQuestionRepository>(MockBehavior.Loose);
-            // this._mockRepository.Setup(s => s.Add(newQuestion))
-            //     .Throws(new ArgumentNullException(nameof(newQuestion.Title)));
-
-            // QuestionService service = new QuestionService(_mockRepository.Object);
+            QuestionService service = new QuestionService(mockRepository.Object);
             
-            // ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => service.Add(newQuestion));
-            // Assert.Equal(nameof(newQuestion.Title), ex.ParamName);
+            ArgumentOutOfRangeException ex = Assert.Throws<ArgumentOutOfRangeException>(() => service.Add(newQuestion));
+            Assert.Equal(nameof(newQuestion.Title), ex.ParamName);
+
+            mockRepository.Verify(m =>m.Add(It.IsAny<Question>()), Times.Once());
         }
 
         [Fact]
-        public void Add_Question_With_Title_Less_Than_11_Char_Error()
+        public void Add_Question_Success()
         {
-            // Question newQuestion = new Question();
-            // newQuestion.Title = "Who are You?";
-            
-            // this._mockRepository = new Mock<IQuestionRepository>(MockBehavior.Loose);
-            // this._mockRepository.Setup(s => s.Add(newQuestion))
-            //     .Throws(new ArgumentOutOfRangeException(
-            //         nameof(newQuestion.Title),
-            //         newQuestion.Title,
-            //         "Question title should have at least 12 characters."
-            //         )
-            //     );
+            List<Option> options = new List<Option>
+            {
+                new Option {Id = 1, Text = "Option A"},
+                new Option {Id = 2, Text = "Option B"},
+                new Option {Id = 3, Text = "Option C"},
+                new Option {Id = 4, Text = "Option D"}
+            };
+            Option answer = options[2];
+            Question newQuestion = new Question("What was the score of the game?", answer, options);
 
-            // QuestionService service = new QuestionService(_mockRepository.Object);
-            
-            // ArgumentOutOfRangeException ex = Assert.Throws<ArgumentOutOfRangeException>(() => service.Add(newQuestion));
-            // Assert.Equal(nameof(newQuestion.Title), ex.ParamName);
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.Add(newQuestion))
+            .Callback<Question>(q => {
+                q.Id = 1;
+                q.Options.ForEach(o => {
+                    o.QuestionId = q.Id;
+                    o.Question = q;
+                });
+            });
+
+            Question expectedQuestion = new Question();
+            List<Option> expectedOptions = new List<Option>
+            {
+                new Option {Id = 1, Text = "Option A", QuestionId = expectedQuestion.Id, Question = expectedQuestion},
+                new Option {Id = 2, Text = "Option B", QuestionId = expectedQuestion.Id, Question = expectedQuestion},
+                new Option {Id = 3, Text = "Option C", QuestionId = expectedQuestion.Id, Question = expectedQuestion},
+                new Option {Id = 4, Text = "Option D", QuestionId = expectedQuestion.Id, Question = expectedQuestion}
+            };
+
+            Option expectedAnswer = options[2];
+            expectedQuestion.Title = "What was the score of the game?";
+            expectedQuestion.Answer = expectedAnswer;
+            expectedQuestion.Options = expectedOptions;
+            expectedQuestion.Id = 1;
+
+            QuestionService service = new QuestionService(mockRepository.Object);
+            service.Add(newQuestion);
+
+            Assert.Equal(expectedQuestion, newQuestion);
+
+            mockRepository.Verify(m => m.Add(It.IsAny<Question>()),Times.Once());
         }
 
         [Fact]
-        public void Add_Question_Without_Options_Error()
+        public void GetAll_Questions_Empty()
         {
-            // Question newQuestion = new Question();
-            // newQuestion.Title = "How many times to you test your code?";
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s =>s.GetAll()).Returns(new List<Question>());
 
-            // this._mockRepository = new Mock<IQuestionRepository>(MockBehavior.Loose);
-            // this._mockRepository.Setup(s => s.Add(newQuestion))
-            //     .Throws(new ArgumentException("Cannot save question without options", nameof(newQuestion.QuestionOptions)));
+            QuestionService service = new QuestionService(mockRepository.Object);
+            var actual = service.GetAll();
 
-            // QuestionService service = new QuestionService(_mockRepository.Object);
-            
-            // ArgumentException ex = Assert.Throws<ArgumentException>(() => service.Add(newQuestion));
-            // Assert.Equal(nameof(newQuestion.QuestionOptions), ex.ParamName);
+            Assert.Equal(new List<Question>(), actual);
+            mockRepository.Verify(m=>m.GetAll(),Times.Once());
         }
 
         [Fact]
-        public void Add_Question_With_Options_Without_Answer()
+        public void GetAll_Questions_Success()
         {
-            // Question newQuestion = new Question();
-            // newQuestion.Title = "How many times to you test your code?";
-            // newQuestion.QuestionOptions.Add(new QuestionOption() {Text = "1"});
-            // newQuestion.QuestionOptions.Add(new QuestionOption() {Text = "2"});
-            // newQuestion.QuestionOptions.Add(new QuestionOption() {Text = "3"});
-            // newQuestion.QuestionOptions.Add(new QuestionOption() {Text = "4"});
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.GetAll()).Returns(this.RandomQuestions(10));
+            var expected = this.RandomQuestions(10);
 
-            // this._mockRepository = new Mock<IQuestionRepository>(MockBehavior.Loose);
-            // this._mockRepository.Setup(s => s.Add(newQuestion))
-            //     .Throws(new ArgumentNullException(nameof(newQuestion.Answer)));
+            QuestionService service = new QuestionService(mockRepository.Object);
+            var actual = service.GetAll();
 
-            // QuestionService service = new QuestionService(_mockRepository.Object);
-            
-            // ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => service.Add(newQuestion));
-            // Assert.Equal(nameof(newQuestion.Answer), ex.ParamName);
+            Assert.Equal(expected, actual);
+            mockRepository.Verify(m=>m.GetAll(),Times.Once());
         }
 
         [Fact]
-        public void Add_Question_With_Invalid_Answer()
+        public void Get_Question_Not_Found_Error()
         {
-            // Question newQuestion = new Question();
-            // newQuestion.Title = "How many times to you test your code?";
-            // newQuestion.QuestionOptions.Add(new QuestionOption() {Text = "1"});
-            // newQuestion.QuestionOptions.Add(new QuestionOption() {Text = "2"});
-            // newQuestion.QuestionOptions.Add(new QuestionOption() {Text = "3"});
-            // newQuestion.QuestionOptions.Add(new QuestionOption() {Text = "4"});
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            Question question = null;
+            mockRepository.Setup(s => s.Get(100)).Returns(question);
 
-            // newQuestion.Answer = new QuestionOption() {Text = "5"};
+            QuestionService service = new QuestionService(mockRepository.Object);
 
-            // this._mockRepository = new Mock<IQuestionRepository>(MockBehavior.Loose);
-            // this._mockRepository.Setup(s => s.Add(newQuestion))
-            //     .Throws(new ArgumentOutOfRangeException(nameof(newQuestion.Answer)));
+            Question actual = service.Get(100);
+            Assert.Null(actual);
 
-            // QuestionService service = new QuestionService(_mockRepository.Object);
+            mockRepository.Verify(m => m.Get(It.IsAny<int>()), Times.Once());
+        }
+
+        [Fact]
+        public void Get_Question_Success()
+        {
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.Get(8)).Returns(this.RandomQuestions(10).Find(q=>q.Id == 8));
+
+            Question expected = this.RandomQuestions(10).Find(q => q.Id == 8);
+            QuestionService service = new QuestionService(mockRepository.Object);
+
+            Question actual = service.Get(8);
+            Assert.NotNull(actual);
+            Assert.Equal(expected, actual);
+
+            mockRepository.Verify(m => m.Get(It.IsAny<int>()), Times.Once());
+        }
+
+        [Fact]
+        public void Delete_Question_Not_Found_Error()
+        {
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.Delete(1))
+                .Throws(new Exception("The current Question does not exist."));//it actually should be DbUpdateConcurrencyException
+
+            QuestionService service = new QuestionService(mockRepository.Object);
+
+            Exception ex  = Assert.Throws<Exception>(() => service.Delete(1));
+
+            Assert.NotNull(ex);
+            Assert.Equal("The current Question does not exist.", ex.Message);
+
+            mockRepository.Verify(m => m.Delete(It.IsAny<int>()), Times.Once());
+        }
+
+        [Fact]
+        public void Delete_Question_Success()
+        {
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.Delete(1));
+
+            QuestionService service = new QuestionService(mockRepository.Object);
+
+            service.Delete(1);
+            mockRepository.Verify(m => m.Delete(It.IsAny<int>()), Times.Once());
+        }
+
+
+        [Fact]
+        public void Update_Question_Without_Title_Error()
+        {
+            Question question = new Question
+            {
+                Id = 1,
+                Title = string.Empty,
+            };
+
+            List<Option> options = this.RandomOptions(4, question).ToList();
+            question.Answer = options[0];
+            question.Options = options;
+
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.Update(question))
+                .Throws(new ArgumentNullException(nameof(question.Title)));
+
+            QuestionService service = new QuestionService(mockRepository.Object);
+
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => service.Update(question));
+
+            Assert.NotNull(ex);
+            Assert.Equal(nameof(question.Title), ex.ParamName);
+            mockRepository.Verify(m => m.Update(It.IsAny<Question>()), Times.Once());
+        }
+
+        [Fact]
+        public void Update_Question_Without_Title_Greater_Than_Max_Error()
+        {
+            Question question = new Question
+            {
+                Id = 1,
+                Title = new String('a',201),
+            };
+
+            List<Option> options = this.RandomOptions(4, question).ToList();
+            question.Answer = options[0];
+            question.Options = options;
+
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.Update(question))
+                .Throws(new ArgumentOutOfRangeException(nameof(question.Title)));
+
+            QuestionService service = new QuestionService(mockRepository.Object);
+
+            ArgumentOutOfRangeException ex = Assert.Throws<ArgumentOutOfRangeException>(() => service.Update(question));
+
+            Assert.NotNull(ex);
+            Assert.Equal(nameof(question.Title), ex.ParamName);
+            mockRepository.Verify(m => m.Update(It.IsAny<Question>()), Times.Once());
+        }
+
+        [Fact]
+        public void Update_Question_Without_Answer_Error()
+        {
+            Question question = new Question
+            {
+                Id = 1,
+                Title = Guid.NewGuid().ToString(),
+            };
             
-            // ArgumentOutOfRangeException ex = Assert.Throws<ArgumentOutOfRangeException>(() => service.Add(newQuestion));
-            // Assert.Equal(nameof(newQuestion.Answer), ex.ParamName);
+            List<Option> options = this.RandomOptions(4, question).ToList();
+            question.Options = options;
+
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.Update(question))
+                .Throws(new ArgumentNullException(nameof(question.Answer)));
+
+            QuestionService service = new QuestionService(mockRepository.Object);
+
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => service.Update(question));
+
+            Assert.NotNull(ex);
+            Assert.Equal(nameof(question.Answer), ex.ParamName);
+            mockRepository.Verify(m => m.Update(It.IsAny<Question>()), Times.Once());
+        }
+
+        [Fact]
+        public void Update_Question_With_Answer_Out_Of_Options_Error()
+        {
+            Question question = new Question
+            {
+                Id = 1,
+                Title = Guid.NewGuid().ToString()
+            };
+            
+            List<Option> options = this.RandomOptions(4, question).ToList();
+            question.Options = options;
+            question.Answer = new Option { Id = 10, Text = "Invalid option", Question = question, QuestionId = question.Id };
+
+            Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.Update(question))
+                .Throws(new ArgumentException("The options list does not contain the current Answer object."));
+
+            QuestionService service = new QuestionService(mockRepository.Object);
+
+            ArgumentException ex = Assert.Throws<ArgumentException>(() => service.Update(question));
+
+            Assert.NotNull(ex);
+            Assert.Equal("The options list does not contain the current Answer object.", ex.Message);
+            mockRepository.Verify(m => m.Update(It.IsAny<Question>()), Times.Once());
+        }
+
+        private List<Question> RandomQuestions(int n)
+        {
+            List<Question> questions = new List<Question>();
+
+            int lastOptionId = 0;
+            for (int i = 1; i <= n; i++)
+            {
+                Question q = new Question();
+                q.Title = $"Question {i}";
+                q.Options = new List<Option>();
+
+                for (int j = 0; j < 4; j++)
+                {
+                    Option o = new Option();
+                    o.Id = ++lastOptionId;
+                    o.Text = $"{q.Title} Option {j}";
+                    o.QuestionId = q.Id;
+                    o.Question = q;
+                    q.Options.Add(o);
+                }
+                q.Answer = q.Options[3];
+                q.Id = i;
+                questions.Add(q);
+            }
+
+            return questions;
+        }
+
+        private IEnumerable<Option> RandomOptions(int nOptions, Question question)
+        {
+            for (int i = 0; i < nOptions; i++)
+            {
+                yield return new Option 
+                { 
+                    Id = i,
+                    Question = question,
+                    QuestionId = question.Id
+                };
+            }
         }
     }
 }

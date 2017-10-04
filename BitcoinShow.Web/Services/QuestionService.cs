@@ -15,32 +15,27 @@ namespace BitcoinShow.Web.Services
 
         public void Add(Question question)
         {
-            _repository.Add(question);            
+            _repository.Add(question);
         }
 
         public List<Question> GetAll()
         {
-            throw new System.NotImplementedException();
+            return _repository.GetAll();
         }
 
-        public Question GetById(int id)
+        public Question Get(int id)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public Question GetByLevel(QuestionLevelEnum level)
-        {
-            throw new System.NotImplementedException();
+            return _repository.Get(id);
         }
 
         public void Delete(int id)
         {
-            throw new System.NotImplementedException();
+            _repository.Delete(id);
         }
 
         public void Update(Question quesiton)
         {
-            throw new System.NotImplementedException();
+            _repository.Update(quesiton);
         }
     }
 }
