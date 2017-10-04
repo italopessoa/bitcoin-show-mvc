@@ -62,9 +62,21 @@ namespace BitcoinShow.Web.Repositories
             return this._context.Questions.Find(id);
         }
 
-        public void Update(Question quesiton)
+        public void Update(Question question)
         {
-            throw new System.NotImplementedException();
+            if(string.IsNullOrEmpty(question.Title))
+            {
+                throw new ArgumentNullException(nameof(question.Title));
+            }
+            if(question.Title.Length > 200)
+            {
+                throw new ArgumentOutOfRangeException(nameof(question.Title), question.Title,"The title has too many characters.");
+            }
+            if(question.Answer == null)
+            {
+                throw new ArgumentNullException(nameof(question.Answer), "You must provide Answer navigation property value.");
+            }
+            this._context.Questions.Update(question);
         }
     }
 }

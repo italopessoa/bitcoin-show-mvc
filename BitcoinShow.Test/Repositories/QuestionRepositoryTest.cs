@@ -45,12 +45,12 @@ namespace BitcoinShow.Test.Repositories
             BitcoinShowDBContext context = DbContextFactory.GetContext();
             QuestionRepository repository = new QuestionRepository(context);
 
-            Question option = new Question();
-            option.Title = "How many times do you test your code?";
+            Question question = new Question();
+            question.Title = "How many times do you test your code?";
             
-            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => repository.Add(option));
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => repository.Add(question));
             Assert.NotNull(ex);
-            Assert.Equal(nameof(option.Answer), ex.ParamName);
+            Assert.Equal(nameof(question.Answer), ex.ParamName);
         }
 
         [Fact]
@@ -168,6 +168,103 @@ namespace BitcoinShow.Test.Repositories
             QuestionRepository repository = new QuestionRepository(context);
             repository.Delete(questionId);
             Assert.Null(context.Questions.Find(questionId));
+        }
+
+        [Fact]
+        public void Update_Question_Without_Title_Error()
+        {
+            var option = new Option {Text = "Update_Question_Without_Answer_Error Option"};
+            var question = new Question
+            {
+                Title = "Update_Question_Without_Title_Error",
+                Answer = option
+            };
+            BitcoinShowDBContext context = DbContextFactory.GetContext();
+            context.Questions.Add(question);
+            context.SaveChanges();
+
+            QuestionRepository repository = new QuestionRepository(context);
+            question.Title = String.Empty;
+            ArgumentNullException ex =  Assert.Throws<ArgumentNullException>(() => repository.Update(question));
+            Assert.NotNull(ex);
+            Assert.Equal(nameof(question.Title), ex.ParamName);
+        }
+
+        [Fact]
+        public void Update_Question_With_Title_Greater_Than_Max_Error()
+        {
+            var option = new Option {Text = "Update_Question_With_Title_Greater_Than_Max_Error Option"};
+            var question = new Question
+            {
+                Title = "Update_Question_With_Title_Greater_Than_Max_Error",
+                Answer = option
+            };
+            BitcoinShowDBContext context = DbContextFactory.GetContext();
+            context.Questions.Add(question);
+            context.SaveChanges();
+
+            QuestionRepository repository = new QuestionRepository(context);
+            question.Title = new String('a', 201);
+            ArgumentOutOfRangeException ex =  Assert.Throws<ArgumentOutOfRangeException>(() => repository.Update(question));
+            Assert.NotNull(ex);
+            Assert.Equal(nameof(question.Title), ex.ParamName);
+        }
+
+        [Fact]
+        public void Update_Question_Without_Answer_Error()
+        {
+            var option = new Option {Text = "Update_Question_Without_Answer_Error Option"};
+            var question = new Question
+            {
+                Title = "Update_Question_Without_Answer_Error",
+                Answer = option
+            };
+            BitcoinShowDBContext context = DbContextFactory.GetContext();
+            context.Questions.Add(question);
+            context.SaveChanges();
+
+            QuestionRepository repository = new QuestionRepository(context);
+            question.Answer = null;
+            ArgumentNullException ex =  Assert.Throws<ArgumentNullException>(() => repository.Update(question));
+            Assert.NotNull(ex);
+            Assert.Equal(nameof(question.Answer), ex.ParamName);
+        }
+
+        [Fact]
+        public void Update_Question_Success()
+        {
+            var option = new Option {Text = "Update_Question_Success Option"};
+            var option2 = new Option {Text = "Update_Question_Success Option2"};
+            var question = new Question
+            {
+                Title = "Update_Question_Success",
+                Answer = option
+            };
+            BitcoinShowDBContext context = DbContextFactory.GetContext();
+            context.Questions.Add(question);
+            context.Options.Add(option2);
+            context.SaveChanges();
+
+            var expected = new Question
+            {
+                Id = question.Id,
+                Title = "Updated",
+                Answer = question.Answer
+            };
+
+            QuestionRepository repository = new QuestionRepository(context);
+            question.Title = "Updated";
+            repository.Update(question);
+
+            var actual = context.Questions.Find(question.Id);
+            Assert.Equal(expected, actual);
+
+            expected.Answer = option2;
+            question.Answer = option2;
+            repository.Update(question);
+
+            actual = context.Questions.Find(question.Id);
+            Assert.Equal(expected, actual);
         }
 
         private IEnumerable<Option> RandomOptions(int nOptions)
