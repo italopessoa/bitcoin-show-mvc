@@ -130,7 +130,7 @@ namespace BitcoinShow.Test.Repositories
                 context.Questions.Add(new Question
                 { 
                     Title = $"Random Question {i + 1}",
-                    Answer = new Option() { Id = i, Text = $"Random Option {i}"}
+                    Answer = new Option { Id = i, Text = $"Random Option {i}"}
                 });
             }
             context.SaveChanges();
