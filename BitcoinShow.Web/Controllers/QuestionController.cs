@@ -2,64 +2,28 @@ using BitcoinShow.Web.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 using BitcoinShow.Web.Models;
 using System.Collections.Generic;
+using BitcoinShow.Web.Facade.Interface;
 
 namespace BitcoinShow.Web.Controllers
 {
     public class QuestionController : Controller
     {
-        private readonly IQuestionService _questionService;
-        private readonly IOptionService _optionService;
-        public QuestionController(IQuestionService questionService, IOptionService optionService)
+        private readonly IBitcoinShowFacade _bitcoinShowFacade;
+        public QuestionController(IBitcoinShowFacade bitcoinShowFacade)
         {
-            this._questionService = questionService;
-            this._optionService = optionService;
+            this._bitcoinShowFacade = bitcoinShowFacade;
         }
 
         public IActionResult Index()
         {
-            List<QuestionViewModel> result = new List<QuestionViewModel>();
-            this._questionService.GetAll().ForEach(q => 
-            {
-                result.Add(new QuestionViewModel
-                {
-                    Id = q.Id,
-                    Title = q.Title
-                });
-            });
-            return View(result);
+            return View(this._bitcoinShowFacade.GetAllQuestions());
         }   
 
         [HttpPost]
         public IActionResult Create(QuestionViewModel model)
         {
-            Question question = new Question();
-            question.Title = model.Title;
-            
-            List<Option> options = new List<Option>();
-            model.Options.ForEach(o => 
-            {
-                options.Add(this._optionService.Add(o.Text) as Option);
-            });
-
-            question.Answer = options[0];
-
-            this._questionService.Add(question);
-            options.ForEach(o => 
-            {
-                o.QuestionId = question.Id;
-                this._optionService.Update(o);
-            });
-
-            List<QuestionViewModel> result = new List<QuestionViewModel>();
-            this._questionService.GetAll().ForEach(q => 
-            {
-                result.Add(new QuestionViewModel
-                {
-                    Id = q.Id,
-                    Title = q.Title
-                });
-            });
-            return View("Index",result);
+            this._bitcoinShowFacade.CreateQuestion(model);
+            return View("Index",this._bitcoinShowFacade.GetAllQuestions());
         }
         public IActionResult Create()
         {
@@ -68,18 +32,7 @@ namespace BitcoinShow.Web.Controllers
 
         public IActionResult Edit(int id)
         {
-            QuestionViewModel result = null;
-            Question question = this._questionService.Get(id);
-            if(question != null)
-            {
-                result = new QuestionViewModel
-                {
-                    Id = question.Id,
-                    Title = question.Title
-                };
-            }
-
-            return View(result);
+            return View(this._bitcoinShowFacade.GetQuestion(id));
         }
     }
 }

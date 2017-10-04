@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BitcoinShow.Web.Facade;
+using BitcoinShow.Web.Facade.Interface;
 using BitcoinShow.Web.Models;
 using BitcoinShow.Web.Repositories;
 using BitcoinShow.Web.Repositories.Interface;
@@ -86,6 +88,7 @@ namespace BitcoinShow.Web
             container.Register<IOptionRepository, OptionRepository>(Lifestyle.Scoped);
             container.Register<IQuestionService, QuestionService>(Lifestyle.Scoped);
             container.Register<IOptionService, OptionService>(Lifestyle.Scoped);
+            container.Register<IBitcoinShowFacade, BitcoinShowFacade>(Lifestyle.Scoped);
 
             container.Register<BitcoinShowDBContext>(() =>
             {
