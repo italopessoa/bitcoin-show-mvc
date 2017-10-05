@@ -1,0 +1,15 @@
+@using BitcoinShow.Web.Models
+
+@model QuestionViewModel
+@{
+    ViewData["title"] = "Edit question";
+}
+@if(Model != null)
+{
+    @Html.LabelFor(m => m.Title)
+    @Html.TextBoxFor(m => m.Title);
+}
+else
+{
+    <h1>Question does not exist!</h1>
+}

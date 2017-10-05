@@ -1,0 +1,27 @@
+@using System.Collections.Generic
+@using BitcoinShow.Web.Models
+
+@model List<QuestionViewModel>
+@{
+    ViewData["Title"] = "Bitcoin Show - Home page";
+}
+@Html.ActionLink("Create", "Create", "Question")
+@if(Model != null && Model.Count > 0)
+{
+    <table>
+        <thead>
+            <th>Question Title</th>
+            <th>Action</th>
+        </thead>
+        <tbody>
+            @for(int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td>@Model[i].Title</td>
+                    <td><a asp-controller="Question" asp-action="Edit" asp-route-id="@Model[i].Id"> Edit @Model[i].Id</a></td>
+                </tr>
+                
+            }
+        </tbody>
+    </table>
+}
