@@ -26,7 +26,7 @@ namespace BitcoinShow.Web.Facade
                 options.Add(this._optionService.Add(o.Text) as Option);
             });
 
-            question.Answer = options[questionViewModel.AnswerIndex];
+            question.Answer = options[questionViewModel.AnswerIndex.Value];
             question.Level = questionViewModel.Level;
             this._questionService.Add(question);
             options.ForEach(o => 

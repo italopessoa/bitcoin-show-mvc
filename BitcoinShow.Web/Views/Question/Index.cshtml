@@ -5,23 +5,34 @@
 @{
     ViewData["Title"] = "Bitcoin Show - Home page";
 }
-@Html.ActionLink("Create", "Create", "Question")
-@if(Model != null && Model.Count > 0)
-{
-    <table>
-        <thead>
-            <th>Question Title</th>
-            <th>Action</th>
-        </thead>
-        <tbody>
-            @for(int i = 0; i < Model.Count; i++)
-            {
-                <tr>
-                    <td>@Model[i].Title</td>
-                    <td><a asp-controller="Question" asp-action="Edit" asp-route-id="@Model[i].Id"> Edit @Model[i].Id</a></td>
-                </tr>
-                
-            }
-        </tbody>
-    </table>
-}
+<div id="todoTab" class="col s12">
+    <div class="tabContainer">
+        <div class="tabContent">
+            <div class="row">
+                <div class="col s12 m8 push-m2">
+                    <section id="todoapp">
+                        @if (Model != null && Model.Count > 0)
+                        {
+                            <ul class="collapsible" data-collapsible="accordion">
+                                @for (int i = 0; i < Model.Count; i++)
+                                {
+                                    <li>
+                                        <div class="collapsible-header"><i class="material-icons">filter_drama</i>@Model[i].Title</div>
+                                        <div class="collapsible-body">
+                                            <span>
+                                                <a asp-controller="Question" asp-action="Edit" asp-route-id="@Model[i].Id"> Edit @Model[i].Id</a>
+                                            </span>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+        <a class="btn-floating btn-large waves-effect waves-light red" href=@(Url.Action("Create", "Question"))><i class="material-icons">add</i></a>
+    </div>
+</div>
