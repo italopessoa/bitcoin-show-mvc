@@ -31,6 +31,21 @@ namespace BitcoinShow.Web.Models
         }
 
         /// <summary>
+        ///     Constructor
+        /// </summary> 
+        /// <param name="title"> Question title. </param>
+        /// <param name="answer"> Question answer. </param>
+        /// <param name="options"> Question options. </param>
+        /// <param name="level"> Question level. </param>
+        public Question(string title, Option answer, List<Option> options, LevelEnum level)
+        {
+            this.Title = title;
+            this.Answer = answer;
+            this.Options = options;
+            this.Level = level;
+        }
+
+        /// <summary>
         ///     Question Id
         /// </summary>
         [Key]
@@ -75,7 +90,10 @@ namespace BitcoinShow.Web.Models
             {
                 return false;
             }
-
+            if (Level != question.Level)
+            {
+                return false;
+            }
             if (Options != null)
             {
                 if (Options.Count != question.Options.Count)
