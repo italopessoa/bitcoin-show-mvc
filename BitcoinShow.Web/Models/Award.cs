@@ -1,12 +1,23 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace BitcoinShow.Web.Models
 {
+    [Table("Award")]
     public class Award
     {
+        [Key]
         public int Id { get; set; }
-        public QuestionLevel QuestionLevel { get; set; }
+    
+        [Required]
+        public decimal Success { get; set; }
 
-        public decimal Right { get; set; }
-        public decimal Wrong { get; set; }
-        public decimal Stop { get; set; }
+        [Required]
+        public decimal Fail { get; set; }
+
+        [Required]
+        public decimal Quit { get; set; }
+
+        public LevelEnum Level { get; set; }
     }
 }

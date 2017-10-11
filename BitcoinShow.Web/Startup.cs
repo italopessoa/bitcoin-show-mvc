@@ -86,8 +86,10 @@ namespace BitcoinShow.Web
             // Add application services. For instance:
             container.Register<IQuestionRepository, QuestionRepository>(Lifestyle.Scoped);
             container.Register<IOptionRepository, OptionRepository>(Lifestyle.Scoped);
+            container.Register<IAwardRepository, AwardRepository>(Lifestyle.Scoped);
             container.Register<IQuestionService, QuestionService>(Lifestyle.Scoped);
             container.Register<IOptionService, OptionService>(Lifestyle.Scoped);
+            container.Register<IAwardService, AwardService>(Lifestyle.Scoped);
             container.Register<IBitcoinShowFacade, BitcoinShowFacade>(Lifestyle.Scoped);
 
             container.Register<BitcoinShowDBContext>(() =>

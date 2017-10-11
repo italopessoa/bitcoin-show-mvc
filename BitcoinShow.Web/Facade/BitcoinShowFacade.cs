@@ -9,19 +9,22 @@ namespace BitcoinShow.Web.Facade
     {
         private readonly IQuestionService _questionService;
         private readonly IOptionService _optionService;
-        public BitcoinShowFacade(IQuestionService questionService, IOptionService optionService)
+        private readonly IAwardService _awardService;
+        
+        public BitcoinShowFacade(IQuestionService questionService, IOptionService optionService, IAwardService awardService)
         {
             this._questionService = questionService;
             this._optionService = optionService;
+            _awardService = awardService;
         }
 
         public QuestionViewModel CreateQuestion(QuestionViewModel questionViewModel)
         {
             Question question = new Question();
             question.Title = questionViewModel.Title;
-            
+
             List<Option> options = new List<Option>();
-            questionViewModel.Options.ForEach(o => 
+            questionViewModel.Options.ForEach(o =>
             {
                 options.Add(this._optionService.Add(o.Text) as Option);
             });
@@ -29,7 +32,7 @@ namespace BitcoinShow.Web.Facade
             question.Answer = options[questionViewModel.AnswerIndex.Value];
             question.Level = questionViewModel.Level;
             this._questionService.Add(question);
-            options.ForEach(o => 
+            options.ForEach(o =>
             {
                 o.QuestionId = question.Id;
                 this._optionService.Update(o);
@@ -39,17 +42,17 @@ namespace BitcoinShow.Web.Facade
             {
                 Id = question.Id,
                 Title = question.Title,
-                Answer = new OptionViewModel 
-                { 
+                Answer = new OptionViewModel
+                {
                     Id = question.Answer.Id,
-                    Text = question.Answer.Text 
+                    Text = question.Answer.Text
                 }
             };
             result.Options = new List<OptionViewModel>();
             question.Options.ForEach(o =>
             {
-                result.Options.Add(new OptionViewModel 
-                { 
+                result.Options.Add(new OptionViewModel
+                {
                     Id = question.Answer.Id,
                     Text = question.Answer.Text
                 });
@@ -61,7 +64,7 @@ namespace BitcoinShow.Web.Facade
         public List<QuestionViewModel> GetAllQuestions()
         {
             List<QuestionViewModel> result = new List<QuestionViewModel>();
-            this._questionService.GetAll().ForEach(q => 
+            this._questionService.GetAll().ForEach(q =>
             {
                 QuestionViewModel question = new QuestionViewModel
                 {
@@ -97,7 +100,7 @@ namespace BitcoinShow.Web.Facade
         {
             Question question = this._questionService.Get(id);
             QuestionViewModel result = null;
-            if(question != null)
+            if (question != null)
             {
                 result = new QuestionViewModel
                 {
@@ -121,6 +124,7 @@ namespace BitcoinShow.Web.Facade
             return result;
         }
 
+
         public void UpdateQuestion(QuestionViewModel questionViewModel)
         {
             Question question = _questionService.Get(questionViewModel.Id.Value);
@@ -138,5 +142,32 @@ namespace BitcoinShow.Web.Facade
 
             _questionService.Update(question);
         }
-  }
+
+
+        public AwardViewModel CreateAward(AwardViewModel awardViewModel)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public AwardViewModel GetAward(AwardViewModel awardViewModel)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<AwardViewModel> GetAwards()
+        {
+            throw new System.NotImplementedException();
+        }
+        
+        public void UpdateAward(AwardViewModel awardViewModel)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void DeleteAward(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
 }
