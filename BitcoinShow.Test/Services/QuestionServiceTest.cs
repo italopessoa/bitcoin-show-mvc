@@ -56,12 +56,12 @@ namespace BitcoinShow.Test.Services
                 new Option {Id = 4, Text = "Option D"}
             };
             Option answer = options[2];
-            Question newQuestion = new Question("What was the score of the game?", answer, options);
-
+            Question newQuestion = new Question("What was the score of the game?", answer, options, LevelEnum.Hard);
             Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
             mockRepository.Setup(s => s.Add(newQuestion))
             .Callback<Question>(q => {
                 q.Id = 1;
+                q.Level = LevelEnum.Hard;
                 q.Options.ForEach(o => {
                     o.QuestionId = q.Id;
                     o.Question = q;
@@ -81,6 +81,7 @@ namespace BitcoinShow.Test.Services
             expectedQuestion.Title = "What was the score of the game?";
             expectedQuestion.Answer = expectedAnswer;
             expectedQuestion.Options = expectedOptions;
+            expectedQuestion.Level = LevelEnum.Hard;
             expectedQuestion.Id = 1;
 
             QuestionService service = new QuestionService(mockRepository.Object);
@@ -186,6 +187,7 @@ namespace BitcoinShow.Test.Services
             {
                 Id = 1,
                 Title = string.Empty,
+                Level = LevelEnum.Hard
             };
 
             List<Option> options = this.RandomOptions(4, question).ToList();
@@ -212,6 +214,7 @@ namespace BitcoinShow.Test.Services
             {
                 Id = 1,
                 Title = new String('a',201),
+                Level = LevelEnum.Hard
             };
 
             List<Option> options = this.RandomOptions(4, question).ToList();
@@ -238,6 +241,7 @@ namespace BitcoinShow.Test.Services
             {
                 Id = 1,
                 Title = Guid.NewGuid().ToString(),
+                Level = LevelEnum.Hard
             };
             
             List<Option> options = this.RandomOptions(4, question).ToList();
@@ -262,7 +266,8 @@ namespace BitcoinShow.Test.Services
             Question question = new Question
             {
                 Id = 1,
-                Title = Guid.NewGuid().ToString()
+                Title = Guid.NewGuid().ToString(),
+                Level = LevelEnum.Hard
             };
             
             List<Option> options = this.RandomOptions(4, question).ToList();
@@ -292,6 +297,7 @@ namespace BitcoinShow.Test.Services
                 Question q = new Question();
                 q.Title = $"Question {i}";
                 q.Options = new List<Option>();
+                q.Level = LevelEnum.Medium;
 
                 for (int j = 0; j < 4; j++)
                 {

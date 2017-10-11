@@ -27,7 +27,7 @@ namespace BitcoinShow.Web.Facade
             });
 
             question.Answer = options[questionViewModel.AnswerIndex];
-
+            question.Level = questionViewModel.Level;
             this._questionService.Add(question);
             options.ForEach(o => 
             {
@@ -66,7 +66,8 @@ namespace BitcoinShow.Web.Facade
                 result.Add(new QuestionViewModel
                 {
                     Id = q.Id,
-                    Title = q.Title
+                    Title = q.Title,
+                    Level = q.Level
                 });
             });
 

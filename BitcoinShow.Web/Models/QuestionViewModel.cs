@@ -40,5 +40,7 @@ namespace BitcoinShow.Web.Models
         public OptionViewModel Answer { get; set; }
 
         public List<OptionViewModel> Options { get; set;}
+
+        public LevelEnum Level { get; set; }
     }
 }
