@@ -55,6 +55,12 @@ namespace BitcoinShow.Web.Models
         [Required]
         public List<Option> Options { get; set; }
 
+        /// <summary>
+        ///     Question level
+        /// </summary>
+        [Required]
+        public LevelEnum Level { get; set; }
+
         public override bool Equals(object obj)
         {
             if (obj == null || GetType() != obj.GetType())
@@ -64,13 +70,13 @@ namespace BitcoinShow.Web.Models
 
             Question question = (Question)obj;
 
-            if((Options == null && question.Options != null)
+            if ((Options == null && question.Options != null)
                 || (Options != null && question.Options == null))
             {
                 return false;
             }
-            
-            if(Options != null)
+
+            if (Options != null)
             {
                 if (Options.Count != question.Options.Count)
                 {
@@ -78,14 +84,14 @@ namespace BitcoinShow.Web.Models
                 }
                 for (int i = 0; i < Options.Count; i++)
                 {
-                    if(!Options[i].Equals(question.Options[i]))
+                    if (!Options[i].Equals(question.Options[i]))
                     {
                         return false;
                     }
                 }
             }
 
-            return (Id == question.Id) && (Title.Equals(question.Title)) 
+            return (Id == question.Id) && (Title.Equals(question.Title))
                 && Answer.Equals(question.Answer);
         }
 
@@ -99,13 +105,13 @@ namespace BitcoinShow.Web.Models
                 {
                     hash = hash * 23 + Title.GetHashCode();
                 }
-                if(Answer != null)
+                if (Answer != null)
                 {
                     hash = hash * 23 + Answer.GetHashCode();
                 }
-                if(Options != null)
+                if (Options != null)
                 {
-                    Options.ForEach(option => 
+                    Options.ForEach(option =>
                     {
                         hash = hash * 23 + option.GetHashCode();
                     });
