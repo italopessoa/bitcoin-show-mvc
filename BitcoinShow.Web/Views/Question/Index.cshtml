@@ -13,14 +13,29 @@
                     <section id="todoapp">
                         @if (Model != null && Model.Count > 0)
                         {
+                            Dictionary<LevelEnum, string> moods = new Dictionary<LevelEnum, string>();
+                            moods.Add(LevelEnum.Easy, "sentiment_very_satisfied");
+                            moods.Add(LevelEnum.Medium, "sentiment_neutral");
+                            moods.Add(LevelEnum.Hard, "sentiment_dissatisfied");
+                            moods.Add(LevelEnum.VeryHard, "sentiment_very_dissatisfied");
+
                             <ul class="collapsible" data-collapsible="accordion">
                                 @for (int i = 0; i < Model.Count; i++)
                                 {
                                     <li>
-                                        <div class="collapsible-header"><i class="material-icons">filter_drama</i>@Model[i].Title</div>
+                                        <div class="collapsible-header"><i class="material-icons">@moods[Model[i].Level]</i>@Model[i].Title
+                                        </div>
                                         <div class="collapsible-body">
+                                            <a asp-controller="Question" asp-action="Edit" asp-route-id="@Model[i].Id"> Edit @Model[i].Id</a>
                                             <span>
-                                                <a asp-controller="Question" asp-action="Edit" asp-route-id="@Model[i].Id"> Edit @Model[i].Id</a>
+                                                <div class="collection">
+                                                    @for (int j = 0; j < Model[i].Options.Count; j++)
+                                                    {
+                                                        <a href="#!" class="collection-item @(@Model[i].AnswerIndex.Value == j ? "active" : "") ">
+                                                            @(Model[i].Options[j].Text)
+                                                        </a>
+                                                    }
+                                                </div>
                                             </span>
                                         </div>
                                     </li>
@@ -36,3 +51,4 @@
         <a class="btn-floating btn-large waves-effect waves-light red" href=@(Url.Action("Create", "Question"))><i class="material-icons">add</i></a>
     </div>
 </div>
+

@@ -54,7 +54,7 @@ namespace BitcoinShow.Web.Repositories
 
         public List<Question> GetAll()
         {
-            return this._context.Questions.ToList();
+            return this._context.Questions.Include(q =>q.Options).ToList();
         }
 
         public Question Get(int id)

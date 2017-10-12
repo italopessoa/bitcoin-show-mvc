@@ -63,12 +63,31 @@ namespace BitcoinShow.Web.Facade
             List<QuestionViewModel> result = new List<QuestionViewModel>();
             this._questionService.GetAll().ForEach(q => 
             {
-                result.Add(new QuestionViewModel
+                QuestionViewModel question = new QuestionViewModel
                 {
                     Id = q.Id,
                     Title = q.Title,
                     Level = q.Level
+                };
+                question.Options.Clear();
+                question.Answer = new OptionViewModel
+                {
+                    Id = q.Answer.Id,
+                    Text = q.Answer.Text,
+                    QuestionId = q.Id
+                };
+                q.Options.ForEach(o => 
+                {
+                    question.Options.Add(new OptionViewModel
+                    {
+                        Id = o.Id,
+                        Text = o.Text,
+                        QuestionId = q.Id
+                    });
                 });
+                question.AnswerIndex = q.Options.IndexOf(q.Answer);
+
+                result.Add(question);
             });
 
             return result;
