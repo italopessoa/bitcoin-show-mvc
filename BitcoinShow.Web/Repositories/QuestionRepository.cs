@@ -59,7 +59,7 @@ namespace BitcoinShow.Web.Repositories
 
         public Question Get(int id)
         {
-            return this._context.Questions.Find(id);
+            return this._context.Questions.Include(q => q.Options).FirstOrDefault(q => q.Id == id);
         }
 
         public void Update(Question question)

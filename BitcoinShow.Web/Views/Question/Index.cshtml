@@ -26,7 +26,6 @@
                                         <div class="collapsible-header"><i class="material-icons">@moods[Model[i].Level]</i>@Model[i].Title
                                         </div>
                                         <div class="collapsible-body">
-                                            <a asp-controller="Question" asp-action="Edit" asp-route-id="@Model[i].Id"> Edit @Model[i].Id</a>
                                             <span>
                                                 <div class="collection">
                                                     @for (int j = 0; j < Model[i].Options.Count; j++)
@@ -37,6 +36,7 @@
                                                     }
                                                 </div>
                                             </span>
+                                            <a asp-controller="Question" asp-action="Edit" asp-route-id="@Model[i].Id" class="waves-effect waves-light btn"><i class="material-icons right">mode_edit</i>Edit</a>
                                         </div>
                                     </li>
                                 }

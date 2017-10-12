@@ -102,11 +102,41 @@ namespace BitcoinShow.Web.Facade
                 result = new QuestionViewModel
                 {
                     Id = question.Id,
-                    Title = question.Title
+                    Title = question.Title,
+                    Level = question.Level
                 };
+                result.Options.Clear();
+                question.Options.ForEach(o => 
+                {
+                    result.Options.Add(new OptionViewModel
+                    {
+                        Id = o.Id,
+                        Text = o.Text,
+                        QuestionId = question.Id
+                    });
+                });
+                result.AnswerIndex = question.Options.IndexOf(question.Answer);
             }
 
             return result;
+        }
+
+        public void UpdateQuestion(QuestionViewModel questionViewModel)
+        {
+            Question question = _questionService.Get(questionViewModel.Id.Value);
+            question.Title = questionViewModel.Title;
+            for (int i = 0; i < question.Options.Count; i++)
+            {
+                question.Options[i].Text = questionViewModel.Options[i].Text;
+            }
+            question.Answer = _optionService.Get(questionViewModel.Options[questionViewModel.AnswerIndex.Value].Id) as Option;
+            question.Level = questionViewModel.Level;
+            question.Options.ForEach(o =>
+            {
+                _optionService.Update(o);
+            });
+
+            _questionService.Update(question);
         }
   }
 }

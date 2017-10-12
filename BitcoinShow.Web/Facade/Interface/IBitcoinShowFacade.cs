@@ -24,5 +24,7 @@ namespace BitcoinShow.Web.Facade.Interface
         /// <param name="id"> Question id</param>
         /// <returns> Question </returns>
         QuestionViewModel GetQuestion(int id);
+
+        void UpdateQuestion(QuestionViewModel questionViewModel);
     }
 }

@@ -34,5 +34,12 @@ namespace BitcoinShow.Web.Controllers
         {
             return View(this._bitcoinShowFacade.GetQuestion(id));
         }
+
+        [HttpPost]
+        public IActionResult Edit(QuestionViewModel questionViewModel)
+        {
+            this._bitcoinShowFacade.UpdateQuestion(questionViewModel);
+            return RedirectToAction("Index");
+        }
     }
 }
