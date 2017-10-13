@@ -124,7 +124,6 @@ namespace BitcoinShow.Web.Facade
             return result;
         }
 
-
         public void UpdateQuestion(QuestionViewModel questionViewModel)
         {
             Question question = _questionService.Get(questionViewModel.Id.Value);
@@ -169,5 +168,4 @@ namespace BitcoinShow.Web.Facade
             throw new System.NotImplementedException();
         }
     }
-
 }

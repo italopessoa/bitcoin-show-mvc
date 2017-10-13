@@ -25,7 +25,6 @@ namespace BitcoinShow.Web.Facade.Interface
         /// <returns> Question </returns>
         QuestionViewModel GetQuestion(int id);
 
-
         void UpdateQuestion(QuestionViewModel questionViewModel);
 
         /// <summary>
@@ -59,6 +58,5 @@ namespace BitcoinShow.Web.Facade.Interface
         /// </summary>
         /// <param name="id"></param>
         void DeleteAward(int id);
-
     }
 }
