@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using BitcoinShow.Web.Models;
 using BitcoinShow.Web.Repositories.Interface;
@@ -11,7 +12,7 @@ namespace BitcoinShow.Web.Repositories
         {
             _context = context;
         }
-        public Award Add(bool success, bool fail, bool quit, LevelEnum level)
+        public Award Add(decimal successValue, decimal failValue, decimal quitValue, LevelEnum level)
         {
             throw new System.NotImplementedException();
         }

@@ -142,7 +142,6 @@ namespace BitcoinShow.Web.Facade
             _questionService.Update(question);
         }
 
-
         public AwardViewModel CreateAward(AwardViewModel awardViewModel)
         {
             throw new System.NotImplementedException();

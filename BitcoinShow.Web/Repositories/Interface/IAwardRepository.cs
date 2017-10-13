@@ -8,12 +8,12 @@ namespace BitcoinShow.Web.Repositories.Interface
         /// <summary>
         ///     Create a new award.
         /// </summary>
-        /// <param name="success"> Award success value. </param>
-        /// <param name="fail"> Award fail value. </param>
-        /// <param name="quit"> Award quit value. </param>
+        /// <param name="successValue"> Award success value. </param>
+        /// <param name="failValue"> Award fail value. </param>
+        /// <param name="quitValue"> Award quit value. </param>
         /// <param name="level"> Award level.</param>
         /// <returns> Award object. </returns>
-        Award Add(bool success, bool fail, bool quit, LevelEnum level);
+        Award Add(decimal successValue, decimal failValue, decimal quitValue, LevelEnum level);
 
         /// <summary>
         ///     Find award by id.
