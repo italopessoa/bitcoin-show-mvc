@@ -5,23 +5,50 @@
 @{
     ViewData["Title"] = "Bitcoin Show - Home page";
 }
-@Html.ActionLink("Create", "Create", "Question")
-@if(Model != null && Model.Count > 0)
-{
-    <table>
-        <thead>
-            <th>Question Title</th>
-            <th>Action</th>
-        </thead>
-        <tbody>
-            @for(int i = 0; i < Model.Count; i++)
-            {
-                <tr>
-                    <td>@Model[i].Title</td>
-                    <td><a asp-controller="Question" asp-action="Edit" asp-route-id="@Model[i].Id"> Edit @Model[i].Id</a></td>
-                </tr>
-                
-            }
-        </tbody>
-    </table>
-}
+<div id="todoTab" class="col s12">
+    <div class="tabContainer">
+        <div class="tabContent">
+            <div class="row">
+                <div class="col s12 m8 push-m2">
+                    <section id="todoapp">
+                        @if (Model != null && Model.Count > 0)
+                        {
+                            Dictionary<LevelEnum, string> moods = new Dictionary<LevelEnum, string>();
+                            moods.Add(LevelEnum.Easy, "sentiment_very_satisfied");
+                            moods.Add(LevelEnum.Medium, "sentiment_neutral");
+                            moods.Add(LevelEnum.Hard, "sentiment_dissatisfied");
+                            moods.Add(LevelEnum.VeryHard, "sentiment_very_dissatisfied");
+
+                            <ul class="collapsible" data-collapsible="accordion">
+                                @for (int i = 0; i < Model.Count; i++)
+                                {
+                                    <li>
+                                        <div class="collapsible-header"><i class="material-icons">@moods[Model[i].Level]</i>@Model[i].Title
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <span>
+                                                <div class="collection">
+                                                    @for (int j = 0; j < Model[i].Options.Count; j++)
+                                                    {
+                                                        <a href="#!" class="collection-item @(@Model[i].AnswerIndex.Value == j ? "active" : "") ">
+                                                            @(Model[i].Options[j].Text)
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </span>
+                                            <a asp-controller="Question" asp-action="Edit" asp-route-id="@Model[i].Id" class="waves-effect waves-light btn"><i class="material-icons right">mode_edit</i>Edit</a>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+        <a class="btn-floating btn-large waves-effect waves-light red" href=@(Url.Action("Create", "Question"))><i class="material-icons">add</i></a>
+    </div>
+</div>
+

@@ -79,15 +79,24 @@ namespace BitcoinShow.Test.Repositories
         public void GetAll_Questions_Success()
         {
             BitcoinShowDBContext context = DbContextFactory.GetContext();
-            for (int i = 0; i < 1; i++)
+            Option option = new Option
             {
-                context.Questions.Add(new Question
-                { 
-                    Title = $"Random Question {i + 1}",
-                    Answer = new Option { Text = $"Random Option {i}"},
-                    Level = LevelEnum.Medium
-                });
-            }
+                Text = "Option"
+            };
+            context.Options.Add(option);
+            context.SaveChanges();
+            List<Option> optionsList = new List<Option>();
+            optionsList.Add(option);
+            Question question = new Question
+            { 
+                Title = $"Random Question {1}",
+                Answer = new Option { Text = $"Random Option {1}"},
+                Level = LevelEnum.Medium,
+            };
+            question.Options = new List<Option>();
+            optionsList[0].QuestionId = question.Id;
+            question.Options.Add(optionsList[0]);
+            context.Questions.Add(question);
             context.SaveChanges();
 
             QuestionRepository repository = new QuestionRepository(context);
@@ -101,6 +110,7 @@ namespace BitcoinShow.Test.Repositories
                 Assert.True(q.Answer.Id > 0);
                 Assert.False(String.IsNullOrEmpty(q.Answer.Text));
                 Assert.Equal(q.Level, LevelEnum.Medium);
+                Assert.Equal(optionsList, q.Options);
             });
         }
 

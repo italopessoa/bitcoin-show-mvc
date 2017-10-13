@@ -26,7 +26,7 @@ namespace BitcoinShow.Web.Facade
                 options.Add(this._optionService.Add(o.Text) as Option);
             });
 
-            question.Answer = options[questionViewModel.AnswerIndex];
+            question.Answer = options[questionViewModel.AnswerIndex.Value];
             question.Level = questionViewModel.Level;
             this._questionService.Add(question);
             options.ForEach(o => 
@@ -63,12 +63,31 @@ namespace BitcoinShow.Web.Facade
             List<QuestionViewModel> result = new List<QuestionViewModel>();
             this._questionService.GetAll().ForEach(q => 
             {
-                result.Add(new QuestionViewModel
+                QuestionViewModel question = new QuestionViewModel
                 {
                     Id = q.Id,
                     Title = q.Title,
                     Level = q.Level
+                };
+                question.Options.Clear();
+                question.Answer = new OptionViewModel
+                {
+                    Id = q.Answer.Id,
+                    Text = q.Answer.Text,
+                    QuestionId = q.Id
+                };
+                q.Options.ForEach(o => 
+                {
+                    question.Options.Add(new OptionViewModel
+                    {
+                        Id = o.Id,
+                        Text = o.Text,
+                        QuestionId = q.Id
+                    });
                 });
+                question.AnswerIndex = q.Options.IndexOf(q.Answer);
+
+                result.Add(question);
             });
 
             return result;
@@ -83,11 +102,41 @@ namespace BitcoinShow.Web.Facade
                 result = new QuestionViewModel
                 {
                     Id = question.Id,
-                    Title = question.Title
+                    Title = question.Title,
+                    Level = question.Level
                 };
+                result.Options.Clear();
+                question.Options.ForEach(o => 
+                {
+                    result.Options.Add(new OptionViewModel
+                    {
+                        Id = o.Id,
+                        Text = o.Text,
+                        QuestionId = question.Id
+                    });
+                });
+                result.AnswerIndex = question.Options.IndexOf(question.Answer);
             }
 
             return result;
+        }
+
+        public void UpdateQuestion(QuestionViewModel questionViewModel)
+        {
+            Question question = _questionService.Get(questionViewModel.Id.Value);
+            question.Title = questionViewModel.Title;
+            for (int i = 0; i < question.Options.Count; i++)
+            {
+                question.Options[i].Text = questionViewModel.Options[i].Text;
+            }
+            question.Answer = _optionService.Get(questionViewModel.Options[questionViewModel.AnswerIndex.Value].Id) as Option;
+            question.Level = questionViewModel.Level;
+            question.Options.ForEach(o =>
+            {
+                _optionService.Update(o);
+            });
+
+            _questionService.Update(question);
         }
   }
 }

@@ -31,7 +31,8 @@ namespace BitcoinShow.Web.Models
         [MaxLength(2)]
         public string Title { get; set; }
 
-        public int AnswerIndex { get; set; }
+        [Required]
+        public int? AnswerIndex { get; set; }
 
         /// <summary>
         ///     Question answer
