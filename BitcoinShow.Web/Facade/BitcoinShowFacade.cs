@@ -148,7 +148,7 @@ namespace BitcoinShow.Web.Facade
             throw new System.NotImplementedException();
         }
 
-        public AwardViewModel GetAward(AwardViewModel awardViewModel)
+        public AwardViewModel GetAward(int id)
         {
             throw new System.NotImplementedException();
         }

@@ -14,7 +14,7 @@ namespace BitcoinShow.Web.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return View(_bitcoinShowFacade.GetAwards());
         }
 
         public IActionResult Create()
@@ -24,18 +24,20 @@ namespace BitcoinShow.Web.Controllers
 
         [HttpPost]
         public IActionResult Create(AwardViewModel awardViewModel)
-        {   
-            return RedirectToAction("Index");
+        {  
+            _bitcoinShowFacade.CreateAward(awardViewModel); 
+            return RedirectToAction("Index",_bitcoinShowFacade.GetAwards());
         }
 
         public IActionResult Edit(int id)
         {
-            return View(null);
+            return View(_bitcoinShowFacade.GetAward(id));
         }
 
         [HttpPost]
-        public IActionResult Edit(AwardViewModel AwardViewModel)
+        public IActionResult Edit(AwardViewModel awardViewModel)
         {
+            _bitcoinShowFacade.UpdateAward(awardViewModel);
             return RedirectToAction("Index");
         }
     }

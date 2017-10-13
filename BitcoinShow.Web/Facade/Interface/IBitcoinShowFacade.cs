@@ -37,9 +37,9 @@ namespace BitcoinShow.Web.Facade.Interface
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="awardViewModel"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        AwardViewModel GetAward(AwardViewModel awardViewModel);
+        AwardViewModel GetAward(int id);
 
         /// <summary>
         /// 
