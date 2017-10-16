@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using AutoMapper;
 using BitcoinShow.Web.Facade.Interface;
 using BitcoinShow.Web.Models;
 using BitcoinShow.Web.Services.Interface;
@@ -154,7 +155,7 @@ namespace BitcoinShow.Web.Facade
 
         public List<AwardViewModel> GetAwards()
         {
-            throw new System.NotImplementedException();
+            return Mapper.Map<List<AwardViewModel>>(_awardService.GetAll());
         }
         
         public void UpdateAward(AwardViewModel awardViewModel)

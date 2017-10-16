@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using BitcoinShow.Web.Facade;
 using BitcoinShow.Web.Facade.Interface;
 using BitcoinShow.Web.Models;
@@ -38,6 +39,9 @@ namespace BitcoinShow.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            Mapper.Initialize(cfg => {
+                cfg.AddProfile<BitcoinShowProfile>();
+            });
             IntegrateSimpleInjector(services);
         }
 
