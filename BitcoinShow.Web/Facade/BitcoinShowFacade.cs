@@ -11,7 +11,7 @@ namespace BitcoinShow.Web.Facade
         private readonly IQuestionService _questionService;
         private readonly IOptionService _optionService;
         private readonly IAwardService _awardService;
-        
+
         public BitcoinShowFacade(IQuestionService questionService, IOptionService optionService, IAwardService awardService)
         {
             this._questionService = questionService;
@@ -80,7 +80,7 @@ namespace BitcoinShow.Web.Facade
                     Text = q.Answer.Text,
                     QuestionId = q.Id
                 };
-                q.Options.ForEach(o => 
+                q.Options.ForEach(o =>
                 {
                     question.Options.Add(new OptionViewModel
                     {
@@ -110,7 +110,7 @@ namespace BitcoinShow.Web.Facade
                     Level = question.Level
                 };
                 result.Options.Clear();
-                question.Options.ForEach(o => 
+                question.Options.ForEach(o =>
                 {
                     result.Options.Add(new OptionViewModel
                     {
@@ -145,27 +145,27 @@ namespace BitcoinShow.Web.Facade
 
         public AwardViewModel CreateAward(AwardViewModel awardViewModel)
         {
-            throw new System.NotImplementedException();
+            return Mapper.Map<AwardViewModel>(_awardService.Add(awardViewModel.Success, awardViewModel.Fail, awardViewModel.Quit, awardViewModel.Level));
         }
 
         public AwardViewModel GetAward(int id)
         {
-            throw new System.NotImplementedException();
+            return Mapper.Map<AwardViewModel>(_awardService.Get(id));
         }
 
         public List<AwardViewModel> GetAwards()
         {
             return Mapper.Map<List<AwardViewModel>>(_awardService.GetAll());
         }
-        
+
         public void UpdateAward(AwardViewModel awardViewModel)
         {
-            throw new System.NotImplementedException();
+            _awardService.Update(Mapper.Map<Award>(awardViewModel));
         }
 
         public void DeleteAward(int id)
         {
-            throw new System.NotImplementedException();
+            _awardService.Delete(id);
         }
     }
 }
