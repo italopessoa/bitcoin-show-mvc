@@ -29,8 +29,8 @@ namespace BitcoinShow.Test.Services
             Assert.Equal("successValue", ex.ParamName);
             Assert.Equal(0M, ex.ActualValue);
             Assert.Equal($"The value must be greater than zero.\r\nParameter name: {"successValue"}\r\nActual value was {0M}.", ex.Message);
-            
-            mockRepository.Verify(r => r.Add(3,1,2, LevelEnum.Easy),Times.Never());
+
+            mockRepository.Verify(r => r.Add(3, 1, 2, LevelEnum.Easy), Times.Never());
         }
 
         [Fact]
@@ -44,9 +44,9 @@ namespace BitcoinShow.Test.Services
             Assert.NotNull(ex);
             Assert.Equal("failValue", ex.ParamName);
             Assert.Equal(-1M, ex.ActualValue);
-            Assert.Equal($"The value must be greater than or equal to zero.\r\nParameter name: {"failValue"}\r\nActual value was {-1M}.", ex.Message); 
+            Assert.Equal($"The value must be greater than or equal to zero.\r\nParameter name: {"failValue"}\r\nActual value was {-1M}.", ex.Message);
 
-            mockRepository.Verify(r => r.Add(3,1,2, LevelEnum.Easy),Times.Never());
+            mockRepository.Verify(r => r.Add(3, 1, 2, LevelEnum.Easy), Times.Never());
         }
 
         [Fact]
@@ -62,7 +62,7 @@ namespace BitcoinShow.Test.Services
             Assert.Equal(-1M, ex.ActualValue);
             Assert.Equal($"The value must be greater than or equal to zero.\r\nParameter name: {"quitValue"}\r\nActual value was {-1M}.", ex.Message);
 
-            mockRepository.Verify(r => r.Add(3,1,2, LevelEnum.Easy),Times.Never());
+            mockRepository.Verify(r => r.Add(3, 1, 2, LevelEnum.Easy), Times.Never());
         }
 
         [Fact]
@@ -76,7 +76,7 @@ namespace BitcoinShow.Test.Services
             Assert.NotNull(ex);
             Assert.Equal("successValue can't be minor than failValue.", ex.Message);
 
-            mockRepository.Verify(r => r.Add(3,1,2, LevelEnum.Easy),Times.Never());
+            mockRepository.Verify(r => r.Add(3, 1, 2, LevelEnum.Easy), Times.Never());
         }
 
         [Fact]
@@ -90,7 +90,7 @@ namespace BitcoinShow.Test.Services
             Assert.NotNull(ex);
             Assert.Equal("successValue can't be minor than quitValue.", ex.Message);
 
-            mockRepository.Verify(r => r.Add(3,1,2, LevelEnum.Easy),Times.Never());
+            mockRepository.Verify(r => r.Add(3, 1, 2, LevelEnum.Easy), Times.Never());
         }
 
         [Fact]
@@ -101,19 +101,19 @@ namespace BitcoinShow.Test.Services
 
             ArgumentException ex = Assert.Throws<ArgumentException>(() => service.Add(1, 1, 2, LevelEnum.Easy));
             Assert.NotNull(ex);
-            Assert.Equal("Award values can't be equal.", ex.Message); 
+            Assert.Equal("Award values can't be equal.", ex.Message);
 
             ex = Assert.Throws<ArgumentException>(() => service.Add(1, 2, 1, LevelEnum.Easy));
             Assert.NotNull(ex);
-            Assert.Equal("Award values can't be equal.", ex.Message); 
+            Assert.Equal("Award values can't be equal.", ex.Message);
 
             ex = Assert.Throws<ArgumentException>(() => service.Add(2, 1, 1, LevelEnum.Easy));
             Assert.NotNull(ex);
             Assert.Equal("Award values can't be equal.", ex.Message);
 
-            mockRepository.Verify(r => r.Add(3,1,2, LevelEnum.Easy),Times.Never());
+            mockRepository.Verify(r => r.Add(3, 1, 2, LevelEnum.Easy), Times.Never());
         }
-        
+
         [Fact]
         public void Add_Award_QuitValue_Minor_than_FailValue_Error()
         {
@@ -124,7 +124,7 @@ namespace BitcoinShow.Test.Services
             Assert.NotNull(ex);
             Assert.Equal("quitValue can't be minor than failValue.", ex.Message);
 
-            mockRepository.Verify(r => r.Add(3,1,2, LevelEnum.Easy),Times.Never());
+            mockRepository.Verify(r => r.Add(3, 1, 2, LevelEnum.Easy), Times.Never());
         }
 
         [Fact]
@@ -144,57 +144,220 @@ namespace BitcoinShow.Test.Services
             IAwardService service = new AwardService(mockRepository.Object);
 
             Award actual = service.Add(3, 1, 2, LevelEnum.Easy);
-            Assert.Equal(expected,actual);
+            Assert.Equal(expected, actual);
 
-            mockRepository.Verify(r => r.Add(3,1,2, LevelEnum.Easy),Times.Once());
+            mockRepository.Verify(r => r.Add(3, 1, 2, LevelEnum.Easy), Times.Once());
         }
 
         [Fact]
         public void Update_Award_SuccessValue_Minor_or_Equal_Zero_Error()
         {
-            throw new NotImplementedException();
+            Mock<IAwardRepository> mockRepository = new Mock<IAwardRepository>(MockBehavior.Strict);
+            IAwardService service = new AwardService(mockRepository.Object);
+
+            var award = new Award
+            {
+                Id = 1,
+                Success = -1,
+                Fail = 0,
+                Quit = 0,
+                Level = LevelEnum.Easy
+            };
+
+            ArgumentOutOfRangeException ex = Assert.Throws<ArgumentOutOfRangeException>(() => service.Update(award));
+
+            Assert.NotNull(ex);
+            Assert.Equal("successValue", ex.ParamName);
+            Assert.Equal(-1M, ex.ActualValue);
+            Assert.Equal($"The value must be greater than zero.\r\nParameter name: {"successValue"}\r\nActual value was {-1M}.", ex.Message);
+
+            award.Success = 0;
+            ex = Assert.Throws<ArgumentOutOfRangeException>(() => service.Update(award));
+
+            Assert.NotNull(ex);
+            Assert.Equal("successValue", ex.ParamName);
+            Assert.Equal(0M, ex.ActualValue);
+            Assert.Equal($"The value must be greater than zero.\r\nParameter name: {"successValue"}\r\nActual value was {0M}.", ex.Message);
+
+            mockRepository.Verify(r => r.Update(It.IsAny<Award>()), Times.Never());
         }
 
         [Fact]
         public void Update_Award_FailValue_Minor_than_Zero_Error()
         {
-            throw new NotImplementedException();
+            Mock<IAwardRepository> mockRepository = new Mock<IAwardRepository>(MockBehavior.Strict);
+            IAwardService service = new AwardService(mockRepository.Object);
+
+            var award = new Award
+            {
+                Id = 1,
+                Success = 1,
+                Fail = -1,
+                Quit = 0,
+                Level = LevelEnum.Easy
+            };
+
+            ArgumentOutOfRangeException ex = Assert.Throws<ArgumentOutOfRangeException>(() => service.Update(award));
+
+            Assert.NotNull(ex);
+            Assert.Equal("failValue", ex.ParamName);
+            Assert.Equal(-1M, ex.ActualValue);
+            Assert.Equal($"The value must be greater than or equal to zero.\r\nParameter name: {"failValue"}\r\nActual value was {-1M}.", ex.Message);
+
+            mockRepository.Verify(r => r.Update(It.IsAny<Award>()), Times.Never());
         }
 
         [Fact]
         public void Update_Award_QuitValue_Minor_than_Zero_Error()
         {
-            throw new NotImplementedException();
+            Mock<IAwardRepository> mockRepository = new Mock<IAwardRepository>(MockBehavior.Strict);
+            IAwardService service = new AwardService(mockRepository.Object);
+
+            var award = new Award
+            {
+                Id = 1,
+                Success = 1,
+                Fail = 1,
+                Quit = -1,
+                Level = LevelEnum.Easy
+            };
+
+            ArgumentOutOfRangeException ex = Assert.Throws<ArgumentOutOfRangeException>(() => service.Update(award));
+
+            Assert.NotNull(ex);
+            Assert.Equal("quitValue", ex.ParamName);
+            Assert.Equal(-1M, ex.ActualValue);
+            Assert.Equal($"The value must be greater than or equal to zero.\r\nParameter name: {"quitValue"}\r\nActual value was {-1M}.", ex.Message);
+
+            mockRepository.Verify(r => r.Update(It.IsAny<Award>()), Times.Never());
         }
 
         [Fact]
         public void Update_Award_SuccessValue_Minor_than_FailValue_Error()
         {
-            throw new NotImplementedException();
+            Mock<IAwardRepository> mockRepository = new Mock<IAwardRepository>(MockBehavior.Strict);
+            IAwardService service = new AwardService(mockRepository.Object);
+
+            var award = new Award
+            {
+                Id = 1,
+                Success = 2,
+                Fail = 3,
+                Quit = 1,
+                Level = LevelEnum.Easy
+            };
+
+            ArgumentException ex = Assert.Throws<ArgumentException>(() => service.Update(award));
+
+            Assert.NotNull(ex);
+            Assert.Equal("successValue can't be minor than failValue.", ex.Message);
+
+            mockRepository.Verify(r => r.Update(It.IsAny<Award>()), Times.Never());
         }
 
         [Fact]
         public void Update_Award_SuccessValue_Minor_than_QuitValue_Error()
         {
-            throw new NotImplementedException();
+            Mock<IAwardRepository> mockRepository = new Mock<IAwardRepository>(MockBehavior.Strict);
+            IAwardService service = new AwardService(mockRepository.Object);
+
+            var award = new Award
+            {
+                Id = 1,
+                Success = 2,
+                Fail = 1,
+                Quit = 3,
+                Level = LevelEnum.Easy
+            };
+
+            ArgumentException ex = Assert.Throws<ArgumentException>(() => service.Update(award));
+
+            Assert.NotNull(ex);
+            Assert.Equal("successValue can't be minor than quitValue.", ex.Message);
+
+            mockRepository.Verify(r => r.Update(It.IsAny<Award>()), Times.Never());
         }
 
         [Fact]
         public void Update_Award_Equal_Values_Error()
         {
-            throw new NotImplementedException();
+            Mock<IAwardRepository> mockRepository = new Mock<IAwardRepository>(MockBehavior.Strict);
+            IAwardService service = new AwardService(mockRepository.Object);
+
+            var award = new Award
+            {
+                Id = 1,
+                Success = 1,
+                Fail = 1,
+                Quit = 2,
+                Level = LevelEnum.Easy
+            };
+
+            ArgumentException ex = Assert.Throws<ArgumentException>(() => service.Update(award));
+            Assert.NotNull(ex);
+            Assert.Equal("Award values can't be equal.", ex.Message);
+
+            award.Success = 1;
+            award.Fail = 2;
+            award.Quit = 1;
+
+            ex = Assert.Throws<ArgumentException>(() => service.Update(award));
+            Assert.NotNull(ex);
+            Assert.Equal("Award values can't be equal.", ex.Message);
+
+            award.Success = 2;
+            award.Fail = 1;
+            award.Quit = 1;
+
+            ex = Assert.Throws<ArgumentException>(() => service.Update(award));
+            Assert.NotNull(ex);
+            Assert.Equal("Award values can't be equal.", ex.Message);
+
+            mockRepository.Verify(r => r.Add(3, 1, 2, LevelEnum.Easy), Times.Never());
         }
 
         [Fact]
         public void Update_Award_QuitValue_Minor_than_FailValue_Error()
         {
-            throw new NotImplementedException();
+            Mock<IAwardRepository> mockRepository = new Mock<IAwardRepository>(MockBehavior.Strict);
+            IAwardService service = new AwardService(mockRepository.Object);
+
+            var award = new Award
+            {
+                Id = 1,
+                Success = 3,
+                Fail = 2,
+                Quit = 1,
+                Level = LevelEnum.Easy
+            };
+
+            ArgumentException ex = Assert.Throws<ArgumentException>(() => service.Update(award));
+            Assert.NotNull(ex);
+            Assert.Equal("quitValue can't be minor than failValue.", ex.Message);
+
+            mockRepository.Verify(r => r.Update(It.IsAny<Award>()), Times.Never());
         }
 
         [Fact]
         public void Update_Award_Success()
         {
-            throw new NotImplementedException();
+            var award = new Award
+            {
+                Id = 1,
+                Success = 3,
+                Fail = 1,
+                Quit = 2,
+                Level = LevelEnum.Easy
+            };
+
+            Mock<IAwardRepository> mockRepository = new Mock<IAwardRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.Update(award));
+
+            IAwardService service = new AwardService(mockRepository.Object);
+
+            service.Update(award);
+
+            mockRepository.Verify(r => r.Update(It.IsAny<Award>()), Times.Once());
         }
     }
 }

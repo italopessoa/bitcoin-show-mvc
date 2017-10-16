@@ -9,7 +9,7 @@ namespace BitcoinShow.Web.Services
     public class AwardService : IAwardService
     {
         private readonly IAwardRepository _repository;
-        
+
         public AwardService(IAwardRepository repository)
         {
             _repository = repository;
@@ -39,7 +39,7 @@ namespace BitcoinShow.Web.Services
         public void Update(Award award)
         {
             ValidateArguments(award.Success, award.Fail, award.Quit, award.Level);
-            throw new System.NotImplementedException();
+            _repository.Update(award);
         }
 
         private void ValidateArguments(decimal successValue, decimal failValue, decimal quitValue, LevelEnum level)
