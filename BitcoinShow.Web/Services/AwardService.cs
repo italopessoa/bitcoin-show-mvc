@@ -23,17 +23,24 @@ namespace BitcoinShow.Web.Services
 
         public void Delete(int id)
         {
-            throw new System.NotImplementedException();
+            if (_repository.Get(id) != null)
+            {
+                _repository.Delete(id);
+            }
+            else
+            {
+                throw new InvalidOperationException($"There's no Award with ID value equal to {id}");
+            }
         }
 
         public Award Get(int id)
         {
-            throw new System.NotImplementedException();
+            return _repository.Get(id);
         }
 
         public List<Award> GetAll()
         {
-            throw new System.NotImplementedException();
+            return _repository.GetAll();
         }
 
         public void Update(Award award)

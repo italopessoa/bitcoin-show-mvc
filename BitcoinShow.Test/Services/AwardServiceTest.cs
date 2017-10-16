@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using BitcoinShow.Web.Models;
 using BitcoinShow.Web.Repositories.Interface;
 using BitcoinShow.Web.Services;
@@ -144,9 +145,9 @@ namespace BitcoinShow.Test.Services
             IAwardService service = new AwardService(mockRepository.Object);
 
             Award actual = service.Add(3, 1, 2, LevelEnum.Easy);
+            mockRepository.Verify(r => r.Add(3, 1, 2, LevelEnum.Easy), Times.Once());
             Assert.Equal(expected, actual);
 
-            mockRepository.Verify(r => r.Add(3, 1, 2, LevelEnum.Easy), Times.Once());
         }
 
         [Fact]
@@ -358,6 +359,74 @@ namespace BitcoinShow.Test.Services
             service.Update(award);
 
             mockRepository.Verify(r => r.Update(It.IsAny<Award>()), Times.Once());
+        }
+
+        [Fact]
+        public void GetAll_Award_Success()
+        {
+            var expected = new List<Award>
+            {
+                new Award { Id = 1, Success = 3, Fail = 1, Quit = 2, Level = LevelEnum.Hard },
+                new Award { Id = 2, Success = 4, Fail = 2, Quit = 3, Level = LevelEnum.Medium }
+            };
+            Mock<IAwardRepository> mockRepository = new Mock<IAwardRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.GetAll()).Returns(expected);
+
+            IAwardService service = new AwardService(mockRepository.Object);
+            List<Award> actual = service.GetAll();
+
+            Assert.Equal(expected, actual);
+
+            mockRepository.Verify(r => r.GetAll(), Times.Once());
+        }
+
+        [Fact]
+        public void Get_Award_Success()
+        {
+            var expected = new Award
+            {
+                Id = 1,
+                Success = 3,
+                Fail = 1,
+                Quit = 2,
+                Level = LevelEnum.Hard
+            };
+            Award expectedNull = null;
+            Mock<IAwardRepository> mockRepository = new Mock<IAwardRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.Get(1)).Returns(expected);
+            mockRepository.Setup(s => s.Get(0)).Returns(expectedNull);
+
+            IAwardService service = new AwardService(mockRepository.Object);
+            Award actual = service.Get(1);
+
+            Assert.Equal(expected, actual);
+            Assert.Null(service.Get(0));
+
+            mockRepository.Verify(r => r.Get(1), Times.Once());
+            mockRepository.Verify(r => r.Get(0), Times.Once());
+        }
+
+        [Fact]
+        public void Delete_Award_Success()
+        {
+            Award notFoundAward = null;
+            Mock<IAwardRepository> mockRepository = new Mock<IAwardRepository>(MockBehavior.Strict);
+            mockRepository.Setup(r => r.Delete(0)).Throws(new InvalidOperationException("There's no Award with ID value equal to 0"));
+            mockRepository.Setup(r => r.Delete(1));
+            mockRepository.Setup(r => r.Get(0)).Returns(notFoundAward);
+            mockRepository.Setup(r => r.Get(1)).Returns(new Award());
+
+            IAwardService service = new AwardService(mockRepository.Object);
+            service.Delete(1);
+            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() => service.Delete(0));
+            Assert.NotNull(ex);
+            Assert.Equal(ex.Message, "There's no Award with ID value equal to 0");
+
+            mockRepository.Verify(r => r.Delete(1), Times.Once());
+
+            mockRepository.Verify(r => r.Get(It.IsAny<int>()), Times.AtLeast(2));
+            mockRepository.Verify(r => r.Delete(0), Times.Never());
+            mockRepository.Verify(r => r.Delete(1), Times.Once());
         }
     }
 }
