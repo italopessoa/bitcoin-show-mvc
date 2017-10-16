@@ -9,11 +9,40 @@ namespace BitcoinShow.Web.Services
     public class AwardService : IAwardService
     {
         private readonly IAwardRepository _repository;
+        
         public AwardService(IAwardRepository repository)
         {
             _repository = repository;
         }
+
         public Award Add(decimal successValue, decimal failValue, decimal quitValue, LevelEnum level)
+        {
+            ValidateArguments(successValue, failValue, quitValue, level);
+            return _repository.Add(successValue, failValue, quitValue, level);
+        }
+
+        public void Delete(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Award Get(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<Award> GetAll()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Update(Award award)
+        {
+            ValidateArguments(award.Success, award.Fail, award.Quit, award.Level);
+            throw new System.NotImplementedException();
+        }
+
+        private void ValidateArguments(decimal successValue, decimal failValue, decimal quitValue, LevelEnum level)
         {
             if (successValue <= 0)
             {
@@ -43,27 +72,6 @@ namespace BitcoinShow.Web.Services
             {
                 throw new ArgumentException("quitValue can't be minor than failValue.");
             }
-            return _repository.Add(successValue, failValue, quitValue, level);
-        }
-
-        public void Delete(int id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Award Get(int id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<Award> GetAll()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void Update(Award award)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

@@ -158,5 +158,53 @@ namespace BitcoinShow.Test.Services
 
             mockRepository.Verify(r => r.Add(3,1,2, LevelEnum.Easy),Times.Once());
         }
+
+        [Fact]
+        public void Update_Award_SuccessValue_Minor_or_Equal_Zero_Error()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact]
+        public void Update_Award_FailValue_Minor_than_Zero_Error()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact]
+        public void Update_Award_QuitValue_Minor_than_Zero_Error()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact]
+        public void Update_Award_SuccessValue_Minor_than_FailValue_Error()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact]
+        public void Update_Award_SuccessValue_Minor_than_QuitValue_Error()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact]
+        public void Update_Award_Equal_Values_Error()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact]
+        public void Update_Award_QuitValue_Minor_than_FailValue_Error()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact]
+        public void Update_Award_Success()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
