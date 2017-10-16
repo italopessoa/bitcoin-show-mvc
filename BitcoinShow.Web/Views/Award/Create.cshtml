@@ -1,0 +1,49 @@
+@using BitcoinShow.Web.Models
+
+@model AwardViewModel
+@{
+    ViewData["Title"] = "Create Award";
+}
+<div class="row">
+    <form asp-action="Create" asp-controller="Award" method="post" id="award-form" class="col s12 m6 push-m3">
+        <div class="row">
+            <div class="input-field inline col s12 m3">
+                <input asp-for="Success" class="validate"/>
+                <label asp-for="Success"></label>
+            </div>
+            <div class="input-field inline col s12 m3">
+                <input asp-for="Fail" class="validate"/>
+                <label asp-for="Fail"></label>
+            </div>
+            <div class="input-field inline col s12 m3">
+                <input asp-for="Quit" class="validate"/>
+                <label asp-for="Quit"></label>
+            </div>
+            <div class="input-field col s6 m3">
+                <select asp-for="Level" asp-items="Html.GetEnumSelectList<LevelEnum>()"></select>
+                <label asp-for="Level"></label>
+            </div>
+                    <div class="row hide-on-small-only">
+            <div class="col m12 right">
+                <button class="waves-effect waves-light btn" type="submit" id="btnSaveQuestion">Save <i class="material-icons right">send</i></button>
+            </div>
+        </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col s12 m6 push-m3">
+        <table id="tableAwards" class="bordered striped highlight centered">
+            <thead>
+                <tr>
+                    <th>Success Value</th>
+                    <th>Fail Value</th>
+                    <th>Quit Value</th>
+                    <th>Level</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+<div>

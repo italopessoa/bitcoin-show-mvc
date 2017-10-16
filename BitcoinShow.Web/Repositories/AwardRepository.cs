@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using BitcoinShow.Web.Models;
 using BitcoinShow.Web.Repositories.Interface;
+using System.Linq;
 
 namespace BitcoinShow.Web.Repositories
 {
@@ -14,7 +15,17 @@ namespace BitcoinShow.Web.Repositories
         }
         public Award Add(decimal successValue, decimal failValue, decimal quitValue, LevelEnum level)
         {
-            throw new System.NotImplementedException();
+            Award award = new Award
+            {
+                Success = successValue,
+                Fail = failValue,
+                Quit = quitValue,
+                Level = level
+            };
+
+            _context.Awards.Add(award);
+            _context.SaveChanges();
+            return award;
         }
 
         public void Delete(int id)
@@ -29,7 +40,7 @@ namespace BitcoinShow.Web.Repositories
 
         public List<Award> GetAll()
         {
-            throw new System.NotImplementedException();
+            return _context.Awards.ToList();
         }
 
         public void Update(Award award)
