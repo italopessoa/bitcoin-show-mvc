@@ -20,12 +20,21 @@ namespace BitcoinShow.Web.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            ConfigureOption(modelBuilder);
+            ConfigureQuestion(modelBuilder);
+        }
+
+        private void ConfigureOption(ModelBuilder modelBuilder)
+        {
             modelBuilder.Entity<Option>()
                 .HasOne(p => p.Question)
                 .WithMany(b => b.Options)
                 .HasForeignKey(p => p.QuestionId)
                 .OnDelete(DeleteBehavior.Restrict);
-            
+        }
+
+        private void ConfigureQuestion(ModelBuilder modelBuilder)
+        {
             modelBuilder.Entity<Question>()
                 .HasMany(p => p.Options);
         }
@@ -33,7 +42,10 @@ namespace BitcoinShow.Web.Models
         #region Sets
 
         public virtual DbSet<Option> Options { get; set; }
+        
         public DbSet<Question> Questions { get; set; }
+
+        public DbSet<Award> Awards { get; set; }
 
         #endregion
 

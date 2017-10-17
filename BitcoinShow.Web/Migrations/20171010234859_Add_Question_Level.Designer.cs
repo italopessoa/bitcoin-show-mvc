@@ -11,32 +11,15 @@ using System;
 namespace BitcoinShow.Web.Migrations
 {
     [DbContext(typeof(BitcoinShowDBContext))]
-    partial class BitcoinShowDBContextModelSnapshot : ModelSnapshot
+    [Migration("20171010234859_Add_Question_Level")]
+    partial class Add_Question_Level
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.0.0-rtm-26452")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("BitcoinShow.Web.Models.Award", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<decimal>("Fail");
-
-                    b.Property<byte>("Level");
-
-                    b.Property<decimal>("Quit");
-
-                    b.Property<decimal>("Success");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Award");
-                });
 
             modelBuilder.Entity("BitcoinShow.Web.Models.Option", b =>
                 {

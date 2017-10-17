@@ -11,7 +11,7 @@
            "preLaunchTask": "build",
            "program": "${workspaceRoot}/BitcoinShow.Web/bin/Debug/netcoreapp2.0/BitcoinShow.Web.dll",
            "args": [],
-           "cwd": "${workspaceRoot}",
+           "cwd": "${workspaceRoot}/BitcoinShow.Web",
            "stopAtEntry": false,
            "launchBrowser": {
                "enabled": true,
@@ -31,7 +31,7 @@
                "ASPNETCORE_ENVIRONMENT": "Development"
            },
            "sourceFileMap": {
-               "/Views": "${workspaceRoot}/Views"
+               "/Views": "${workspaceRoot}/BitcoinShow.Web/Views"
            }
        },
         {

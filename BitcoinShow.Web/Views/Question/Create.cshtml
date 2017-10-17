@@ -1,0 +1,61 @@
+@using BitcoinShow.Web.Models
+
+@model QuestionViewModel
+@{
+    ViewData["Title"] = "Create question";
+}
+<div class="row">
+    <form asp-action="Create" asp-controller="Question" method="post" id="question-form" class="col s12 m6 push-m3">
+        <div class="row">
+            <div class="input-field inline col s12">
+                @Html.TextBoxFor(m => m.Title, new { @class = "validate", @id = "question_title" })
+                <label for="question_title">Question Title</label>
+            </div>
+        
+            @for (int i = 0; i < Model.Options.Count; i++)
+            {
+                <div class="input-field inline col s12 m12 l6">
+                    @Html.TextBoxFor(m => m.Options[i].Text, new { @class = "validate", @id = "question_option_" + @i })
+                    <label for="question_option_@i">Option @(i+1)</label>
+                </div>
+            }
+            <div class="input-field col s6 m6">
+                <select asp-for="Level" asp-items="Html.GetEnumSelectList<LevelEnum>()"></select>
+                <label asp-for="Level"></label>
+            </div>
+        </div>
+
+        <div class="row hide-on-small-only">
+            <div class="col m12 right">
+                <a class="waves-effect waves-light btn modal-trigger" href="#modal-answer">Save
+                    <i class="material-icons right">send</i>
+                </a>
+                <button hidden type="submit" id="btnSaveQuestion"/>
+            </div>
+        </div>
+
+        <div class="fixed-action-btn hide-on-med-and-up modal-trigger" href="#modal-answer" style="bottom: 45px; right: 24px;">
+            <a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">check</i></a>
+        </div>
+
+        <!-- modal answer -->
+        <div id="modal-answer" class="modal">
+            <div class="modal-content">
+                <h4>Select the correct option</h4>
+                <div class="row center">
+                    <div class="col s12 m12">
+                        @for (int i = 0; i < Model.Options.Count; i++)
+                        {
+                            <input name="AnswerIndex" class="with-gap" asp-for="AnswerIndex" type="radio" value="@i" id=@("test"+i)/>
+                            <label for="@("test"+i)">Option @(1+i)</label>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat" onclick="$('#btnSaveQuestion').click();">OK</a>
+            </div>
+        </div>
+        <!-- modal answer -->
+    </form>
+</div>
