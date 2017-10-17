@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/italopessoa/bitcoin-show-mvc/stargazers">
-    <img alt="GitHub Stars" src="https://img.shields.io/github/stars/italopessoa/bitcoin-show-mvc.svg?style=social&label=Star">
+    <img alt="License" src="https://img.shields.io/github/stars/italopessoa/bitcoin-show-mvc.svg?style=social&label=Star">
   </a>
   <a href="https://github.com/italopessoa/bitcoin-show-mvc/blob/master/LICENSE">
     <img alt="GitHub Stars" src="https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square">
