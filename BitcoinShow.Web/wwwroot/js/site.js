@@ -1,6 +1,6 @@
 ﻿function loadAwards() {
     var table = $("#tableAwards tbody");
-    table.children().empty()
+    table.children().empty();
     $.ajax({
             url: "/Award/List"
         })
@@ -25,16 +25,11 @@ function deleteAward(id) {
         id
     };
     $.ajax({
-        type: 'DELETE',
-        url: '/Award/Delete',
+        type: "DELETE",
+        url: "/Award/Delete",
         data: dataPost,
-        success: function () {
-            Materialize.toast('Removed!', 4000, 'green')
-        },
-        error: function (e) {
-            console.log(e);
-            Materialize.toast('Error!', 4000, 'red')
-        }
+        success: () => Materialize.toast("Removed!", 4000, "green"),
+        error: () => Materialize.toast("Error!", 4000, "red")
     }).done(function () {
         loadAwards();
     });

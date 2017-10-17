@@ -17,7 +17,7 @@ namespace BitcoinShow.Web.Services
 
         public Award Add(decimal successValue, decimal failValue, decimal quitValue, LevelEnum level)
         {
-            ValidateArguments(successValue, failValue, quitValue, level);
+            ValidateArguments(successValue, failValue, quitValue);
             return _repository.Add(successValue, failValue, quitValue, level);
         }
 
@@ -45,11 +45,11 @@ namespace BitcoinShow.Web.Services
 
         public void Update(Award award)
         {
-            ValidateArguments(award.Success, award.Fail, award.Quit, award.Level);
+            ValidateArguments(award.Success, award.Fail, award.Quit);
             _repository.Update(award);
         }
 
-        private void ValidateArguments(decimal successValue, decimal failValue, decimal quitValue, LevelEnum level)
+        private void ValidateArguments(decimal successValue, decimal failValue, decimal quitValue)
         {
             if (successValue <= 0)
             {
