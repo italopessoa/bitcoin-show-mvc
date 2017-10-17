@@ -7,6 +7,7 @@ namespace BitcoinShow.Web.Models
         public BitcoinShowProfile()
         {
             CreateMap<Award, AwardViewModel>();
+            CreateMap<AwardViewModel, Award>();
             CreateMap<Question, QuestionViewModel>();
         }      
     }

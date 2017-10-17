@@ -30,12 +30,13 @@ namespace BitcoinShow.Web.Repositories
 
         public void Delete(int id)
         {
-            throw new System.NotImplementedException();
+            _context.Awards.Remove(_context.Awards.Find(id));
+            _context.SaveChanges();
         }
 
         public Award Get(int id)
         {
-            throw new System.NotImplementedException();
+            return _context.Awards.Find(id);
         }
 
         public List<Award> GetAll()
@@ -45,7 +46,8 @@ namespace BitcoinShow.Web.Repositories
 
         public void Update(Award award)
         {
-            throw new System.NotImplementedException();
+            _context.Awards.Update(award);
+            _context.SaveChanges();
         }
     }
 }

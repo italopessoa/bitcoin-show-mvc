@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace BitcoinShow.Web.Models
 {
@@ -16,5 +17,13 @@ namespace BitcoinShow.Web.Models
         public decimal Quit { get; set; }
 
         public LevelEnum Level { get; set; }
+        
+        public string LevelName 
+        { 
+            get 
+            {
+                return Level.GetEnumDisplayName(); 
+            } 
+        }
     }
 }

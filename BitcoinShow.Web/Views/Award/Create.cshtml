@@ -2,46 +2,56 @@
 
 @model AwardViewModel
 @{
-    ViewData["Title"] = "Create Award";
+    bool isNew = Model == null || !Model.Id.HasValue || Model.Id.Value == 0;
+    ViewData["Title"] = isNew ? "Create Award" : "Edit Award";
 }
 <div class="row">
-    <form asp-action="Create" asp-controller="Award" method="post" id="award-form" class="col s12 m6 push-m3">
+    <form asp-action="@(isNew ? "Create" : "Edit")" asp-controller="Award" method="post" id="award-form" class="col s12 col s12 m10 push-m1 l6 push-l3">
         <div class="row">
-            <div class="input-field inline col s12 m3">
+            <div class="col s12">
+                <h4>@($"{(isNew ? "Create" : "Edit")} Award")</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field inline col s6 m6 l3">
                 <input asp-for="Success" class="validate"/>
                 <label asp-for="Success"></label>
             </div>
-            <div class="input-field inline col s12 m3">
+            <div class="input-field inline col s6 m6 l3">
                 <input asp-for="Fail" class="validate"/>
                 <label asp-for="Fail"></label>
             </div>
-            <div class="input-field inline col s12 m3">
+            <div class="input-field inline col s6 m6 l3">
                 <input asp-for="Quit" class="validate"/>
                 <label asp-for="Quit"></label>
             </div>
-            <div class="input-field col s6 m3">
+            <div class="input-field col s6 m6 l3">
                 <select asp-for="Level" asp-items="Html.GetEnumSelectList<LevelEnum>()"></select>
                 <label asp-for="Level"></label>
             </div>
-                    <div class="row hide-on-small-only">
-            <div class="col m12 right">
-                <button class="waves-effect waves-light btn" type="submit" id="btnSaveQuestion">Save <i class="material-icons right">send</i></button>
+        </div>
+        <div class="row hide-on-small-only">
+            <div class="col m12 ">
+                <button class="waves-effect waves-light btn right" type="submit" id="btnSaveQuestion">Save <i class="material-icons right">send</i></button>
             </div>
         </div>
+        <div class="fixed-action-btn hide-on-med-and-up modal-trigger" href="#modal-answer" style="bottom: 45px; right: 24px;">
+            <button class="btn-floating btn-large waves-effect waves-light red" type="submit" id="btnSaveQuestion"><i class="material-icons">@(isNew ? "check" : "mode_edit")</i></button>
         </div>
     </form>
 </div>
-<div class="row">
-    <div class="col s12 m6 push-m3">
-        <table id="tableAwards" class="bordered striped highlight centered">
+<div class="row" style="@(isNew  ? "visibility: visible" : "visibility: hidden")">
+    <div class="col s12 m10 l6 push-m1 push-l3">
+        <table id="tableAwards" class="bordered striped centered">
             <thead>
                 <tr>
                     <th>Success Value</th>
                     <th>Fail Value</th>
                     <th>Quit Value</th>
                     <th>Level</th>
+                    <th></th>
                 </tr>
-            </thead>
+            </thead>    
             <tbody>
             </tbody>
         </table>
