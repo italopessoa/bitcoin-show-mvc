@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using BitcoinShow.Web.Models;
 using BitcoinShow.Web.Facade.Interface;
+using Microsoft.AspNetCore.Cors;
 
 namespace BitcoinShow.Web.Controllers
 {
@@ -13,6 +14,7 @@ namespace BitcoinShow.Web.Controllers
         }
 
         [HttpGet]
+        [EnableCors("enable-cors")]
         public IActionResult List()
         {
             System.Collections.Generic.List<AwardViewModel> a = new System.Collections.Generic.List<AwardViewModel>();
