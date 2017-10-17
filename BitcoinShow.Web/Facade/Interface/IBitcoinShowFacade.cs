@@ -8,7 +8,7 @@ namespace BitcoinShow.Web.Facade.Interface
         /// <summary>
         ///     List all the questions.
         /// </summary>
-        /// <returns> List of Questions.!-- </returns>
+        /// <returns> List of Questions. </returns>
         List<QuestionViewModel> GetAllQuestions();
 
         /// <summary>
@@ -26,5 +26,37 @@ namespace BitcoinShow.Web.Facade.Interface
         QuestionViewModel GetQuestion(int id);
 
         void UpdateQuestion(QuestionViewModel questionViewModel);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="awardViewModel"></param>
+        /// <returns></returns>
+        AwardViewModel CreateAward(AwardViewModel awardViewModel);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        AwardViewModel GetAward(int id);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        List<AwardViewModel> GetAwards();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="awardViewModel"></param>
+        void UpdateAward(AwardViewModel awardViewModel);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        void DeleteAward(int id);
     }
 }

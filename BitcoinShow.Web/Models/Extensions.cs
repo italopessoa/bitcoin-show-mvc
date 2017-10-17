@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace BitcoinShow.Web.Models
@@ -8,11 +9,13 @@ namespace BitcoinShow.Web.Models
     /// </summary>
     public static class Extensions
     {
-        public static string GetEnumDescription<TEnum>(this TEnum item)
-            => item.GetType()
+        public static string GetEnumDisplayName<TEnum>(this TEnum item)
+        {
+            return item.GetType()
                 .GetField(item.ToString())
-                .GetCustomAttributes(typeof(DescriptionAttribute), false)
-                .Cast<DescriptionAttribute>()
-                .FirstOrDefault()?.Description ?? string.Empty;
+                .GetCustomAttributes(typeof(DisplayAttribute), false)
+                .Cast<DisplayAttribute>()
+                .FirstOrDefault()?.Name ?? string.Empty;
+        }
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using AutoMapper;
 using BitcoinShow.Web.Facade.Interface;
 using BitcoinShow.Web.Models;
 using BitcoinShow.Web.Services.Interface;
@@ -9,19 +10,22 @@ namespace BitcoinShow.Web.Facade
     {
         private readonly IQuestionService _questionService;
         private readonly IOptionService _optionService;
-        public BitcoinShowFacade(IQuestionService questionService, IOptionService optionService)
+        private readonly IAwardService _awardService;
+
+        public BitcoinShowFacade(IQuestionService questionService, IOptionService optionService, IAwardService awardService)
         {
             this._questionService = questionService;
             this._optionService = optionService;
+            _awardService = awardService;
         }
 
         public QuestionViewModel CreateQuestion(QuestionViewModel questionViewModel)
         {
             Question question = new Question();
             question.Title = questionViewModel.Title;
-            
+
             List<Option> options = new List<Option>();
-            questionViewModel.Options.ForEach(o => 
+            questionViewModel.Options.ForEach(o =>
             {
                 options.Add(this._optionService.Add(o.Text) as Option);
             });
@@ -29,7 +33,7 @@ namespace BitcoinShow.Web.Facade
             question.Answer = options[questionViewModel.AnswerIndex.Value];
             question.Level = questionViewModel.Level;
             this._questionService.Add(question);
-            options.ForEach(o => 
+            options.ForEach(o =>
             {
                 o.QuestionId = question.Id;
                 this._optionService.Update(o);
@@ -39,17 +43,17 @@ namespace BitcoinShow.Web.Facade
             {
                 Id = question.Id,
                 Title = question.Title,
-                Answer = new OptionViewModel 
-                { 
+                Answer = new OptionViewModel
+                {
                     Id = question.Answer.Id,
-                    Text = question.Answer.Text 
+                    Text = question.Answer.Text
                 }
             };
             result.Options = new List<OptionViewModel>();
             question.Options.ForEach(o =>
             {
-                result.Options.Add(new OptionViewModel 
-                { 
+                result.Options.Add(new OptionViewModel
+                {
                     Id = question.Answer.Id,
                     Text = question.Answer.Text
                 });
@@ -61,7 +65,7 @@ namespace BitcoinShow.Web.Facade
         public List<QuestionViewModel> GetAllQuestions()
         {
             List<QuestionViewModel> result = new List<QuestionViewModel>();
-            this._questionService.GetAll().ForEach(q => 
+            this._questionService.GetAll().ForEach(q =>
             {
                 QuestionViewModel question = new QuestionViewModel
                 {
@@ -76,7 +80,7 @@ namespace BitcoinShow.Web.Facade
                     Text = q.Answer.Text,
                     QuestionId = q.Id
                 };
-                q.Options.ForEach(o => 
+                q.Options.ForEach(o =>
                 {
                     question.Options.Add(new OptionViewModel
                     {
@@ -97,7 +101,7 @@ namespace BitcoinShow.Web.Facade
         {
             Question question = this._questionService.Get(id);
             QuestionViewModel result = null;
-            if(question != null)
+            if (question != null)
             {
                 result = new QuestionViewModel
                 {
@@ -106,7 +110,7 @@ namespace BitcoinShow.Web.Facade
                     Level = question.Level
                 };
                 result.Options.Clear();
-                question.Options.ForEach(o => 
+                question.Options.ForEach(o =>
                 {
                     result.Options.Add(new OptionViewModel
                     {
@@ -138,5 +142,30 @@ namespace BitcoinShow.Web.Facade
 
             _questionService.Update(question);
         }
-  }
+
+        public AwardViewModel CreateAward(AwardViewModel awardViewModel)
+        {
+            return Mapper.Map<AwardViewModel>(_awardService.Add(awardViewModel.Success, awardViewModel.Fail, awardViewModel.Quit, awardViewModel.Level));
+        }
+
+        public AwardViewModel GetAward(int id)
+        {
+            return Mapper.Map<AwardViewModel>(_awardService.Get(id));
+        }
+
+        public List<AwardViewModel> GetAwards()
+        {
+            return Mapper.Map<List<AwardViewModel>>(_awardService.GetAll());
+        }
+
+        public void UpdateAward(AwardViewModel awardViewModel)
+        {
+            _awardService.Update(Mapper.Map<Award>(awardViewModel));
+        }
+
+        public void DeleteAward(int id)
+        {
+            _awardService.Delete(id);
+        }
+    }
 }
