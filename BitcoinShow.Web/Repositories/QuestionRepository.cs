@@ -78,5 +78,10 @@ namespace BitcoinShow.Web.Repositories
             }
             this._context.Questions.Update(question);
         }
+
+        public Question GetByLevel(LevelEnum level, int[] excludeIds)
+        {
+            return _context.Questions.Where(q => !excludeIds.Contains(q.Id) && q.Level == level).Take(1).FirstOrDefault();
+        }
     }
 }

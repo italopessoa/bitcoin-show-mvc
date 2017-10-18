@@ -35,5 +35,7 @@ namespace BitcoinShow.Web.Services.Interface
         /// </summary>
         /// <param name="question"> Question object with value to update. </param>
         void Update(Question question);
+
+        Question GetByLevel(LevelEnum level, int[] excludeIds);
     }
 }
