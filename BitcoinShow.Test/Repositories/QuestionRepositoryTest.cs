@@ -334,7 +334,11 @@ namespace BitcoinShow.Test.Repositories
 
             question = repository.GetByLevel(LevelEnum.Easy, new int[] { easyIds[0], easyIds[4] });
             Assert.NotNull(question);
-            var filter = easyIds.Select((value, index) => new {value, index}).Where(item => item.index == 0 || item.index == 4).Select(item =>item.value);
+            var filter = easyIds
+                .Select((value, index) => new {value, index})
+                .Where(item => item.index == 0 || item.index == 4)
+                .Select(item =>item.value);
+                
             Assert.True(easyIds.Contains(question.Id));
             Assert.False(filter.Contains(question.Id));
         }
