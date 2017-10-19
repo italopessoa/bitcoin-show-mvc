@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace BitcoinShow.Web.Models
 {
@@ -32,6 +33,7 @@ namespace BitcoinShow.Web.Models
         public string Title { get; set; }
 
         [Required]
+        [JsonIgnore]
         public int? AnswerIndex { get; set; }
 
         /// <summary>

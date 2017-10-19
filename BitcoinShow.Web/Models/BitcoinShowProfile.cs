@@ -9,6 +9,7 @@ namespace BitcoinShow.Web.Models
             CreateMap<Award, AwardViewModel>();
             CreateMap<AwardViewModel, Award>();
             CreateMap<Question, QuestionViewModel>();
+            CreateMap<Option, OptionViewModel>();
         }      
     }
 }
