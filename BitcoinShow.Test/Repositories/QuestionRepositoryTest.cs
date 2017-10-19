@@ -33,7 +33,7 @@ namespace BitcoinShow.Test.Repositories
 
             Question option = new Question();
             option.Title = new String('a', 201);
-            
+
             ArgumentOutOfRangeException ex = Assert.Throws<ArgumentOutOfRangeException>(() => repository.Add(option));
             Assert.NotNull(ex);
             Assert.Equal(nameof(option.Title), ex.ParamName);
@@ -47,7 +47,7 @@ namespace BitcoinShow.Test.Repositories
 
             Question question = new Question();
             question.Title = "How many times do you test your code?";
-            
+
             ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => repository.Add(question));
             Assert.NotNull(ex);
             Assert.Equal(nameof(question.Answer), ex.ParamName);
@@ -59,7 +59,7 @@ namespace BitcoinShow.Test.Repositories
             BitcoinShowDBContext context = DbContextFactory.GetContext();
 
             var options = RandomOptions(4).ToList();
-            options.ForEach(o => 
+            options.ForEach(o =>
             {
                 context.Options.Add(o);
             });
@@ -101,7 +101,7 @@ namespace BitcoinShow.Test.Repositories
 
             QuestionRepository repository = new QuestionRepository(context);
 
-            repository.GetAll().ForEach(q => 
+            repository.GetAll().ForEach(q =>
             {
                 Assert.NotNull(q);
                 Assert.True(q.Id > 0);
@@ -294,37 +294,29 @@ namespace BitcoinShow.Test.Repositories
             int[] mediumIds = new int[5];
             int[] hardIds = new int[5];
             int[] veryHardIds = new int[5];
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 4; i++)
             {
                 Question easyQuestion = new Question();
                 easyQuestion.Answer = new Option { Text = "Option 1 easyQuestion ${easyQuestion.Id}", QuestionId = easyQuestion.Id };
                 easyQuestion.Title = "Question 1";
                 easyQuestion.Level = LevelEnum.Easy;
+                var options = RandomOptions(4).ToList();
+                options.ForEach(o => {
+                    context.Options.Add(o);
+                });
+                context.SaveChanges();
+                
+                easyQuestion.Answer = options[0];
                 context.Questions.Add(easyQuestion);
 
-                Question mediumQuestion = new Question();
-                mediumQuestion.Answer = new Option { Text = "Option 1 mediumQuestion ${mediumQuestion.Id}", QuestionId = mediumQuestion.Id };
-                mediumQuestion.Title = "Question 1";
-                mediumQuestion.Level = LevelEnum.Medium;
-                context.Questions.Add(mediumQuestion);
-
-                Question hardQuestion = new Question();
-                hardQuestion.Answer = new Option { Text = "Option 1 hardQuestion ${hardQuestion.Id}", QuestionId = hardQuestion.Id };
-                hardQuestion.Title = "Question 1";
-                hardQuestion.Level = LevelEnum.Medium;
-                context.Questions.Add(hardQuestion);
-
-                Question veryHardQuestion = new Question();
-                veryHardQuestion.Answer = new Option { Text = "Option 1 veryHardQuestion ${veryHardQuestion.Id}", QuestionId = veryHardQuestion.Id };
-                veryHardQuestion.Title = "Question 1";
-                veryHardQuestion.Level = LevelEnum.Medium;
-                context.Questions.Add(veryHardQuestion);
+                easyQuestion.Options = options;
+                options.ForEach(o=>{
+                    o.Question = easyQuestion;
+                    context.Options.Update(o);
+                });
                 context.SaveChanges();
 
                 easyIds[i] = easyQuestion.Id;
-                mediumIds[i] = mediumQuestion.Id;
-                hardIds[i] = hardQuestion.Id;
-                veryHardIds[i] = veryHardQuestion.Id;
             }
             #endregion mock data
 
@@ -335,10 +327,10 @@ namespace BitcoinShow.Test.Repositories
             question = repository.GetByLevel(LevelEnum.Easy, new int[] { easyIds[0], easyIds[4] });
             Assert.NotNull(question);
             var filter = easyIds
-                .Select((value, index) => new {value, index})
+                .Select((value, index) => new { value, index })
                 .Where(item => item.index == 0 || item.index == 4)
-                .Select(item =>item.value);
-                
+                .Select(item => item.value);
+
             Assert.True(easyIds.Contains(question.Id));
             Assert.False(filter.Contains(question.Id));
         }
