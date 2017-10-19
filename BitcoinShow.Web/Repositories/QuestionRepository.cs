@@ -81,13 +81,14 @@ namespace BitcoinShow.Web.Repositories
 
         public Question GetByLevel(LevelEnum level, int[] excludeIds)
         {
-            var filter = _context.Questions
-                .OrderBy(r => Guid.NewGuid())
+            return _context.Questions
                 .Include(q => q.Options)
                 .Include(q => q.Answer)
-                .Where(q => !excludeIds.Contains(q.Id) && q.Level == level).ToList();
-            var question = filter.Take(1).FirstOrDefault();
-            return question;
+                .Where(q => !excludeIds.Contains(q.Id) && q.Level == level)
+                .ToList()
+                .OrderBy(r => Guid.NewGuid())
+                .Take(1)
+                .FirstOrDefault();
         }
     }
 }
