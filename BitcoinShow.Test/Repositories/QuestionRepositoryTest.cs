@@ -88,9 +88,9 @@ namespace BitcoinShow.Test.Repositories
             List<Option> optionsList = new List<Option>();
             optionsList.Add(option);
             Question question = new Question
-            { 
+            {
                 Title = $"Random Question {1}",
-                Answer = new Option { Text = $"Random Option {1}"},
+                Answer = new Option { Text = $"Random Option {1}" },
                 Level = LevelEnum.Medium,
             };
             question.Options = new List<Option>();
@@ -121,9 +121,9 @@ namespace BitcoinShow.Test.Repositories
             for (int i = 0; i < 10; i++)
             {
                 context.Questions.Add(new Question
-                { 
+                {
                     Title = $"Random Question {i + 1}",
-                    Answer = new Option { Id = i, Text = $"Random Option {i}"}
+                    Answer = new Option { Id = i, Text = $"Random Option {i}" }
                 });
             }
             context.SaveChanges();
@@ -141,9 +141,9 @@ namespace BitcoinShow.Test.Repositories
             for (int i = 0; i < 98; i++)
             {
                 context.Questions.Add(new Question
-                { 
+                {
                     Title = $"Random Question {i + 1}",
-                    Answer = new Option { Id = i, Text = $"Random Option {i}"},
+                    Answer = new Option { Id = i, Text = $"Random Option {i}" },
                     Level = LevelEnum.VeryHard
                 });
             }
@@ -187,7 +187,7 @@ namespace BitcoinShow.Test.Repositories
         [Fact]
         public void Update_Question_Without_Title_Error()
         {
-            var option = new Option {Text = "Update_Question_Without_Answer_Error Option"};
+            var option = new Option { Text = "Update_Question_Without_Answer_Error Option" };
             var question = new Question
             {
                 Title = "Update_Question_Without_Title_Error",
@@ -199,7 +199,7 @@ namespace BitcoinShow.Test.Repositories
 
             QuestionRepository repository = new QuestionRepository(context);
             question.Title = String.Empty;
-            ArgumentNullException ex =  Assert.Throws<ArgumentNullException>(() => repository.Update(question));
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => repository.Update(question));
             Assert.NotNull(ex);
             Assert.Equal(nameof(question.Title), ex.ParamName);
         }
@@ -207,7 +207,7 @@ namespace BitcoinShow.Test.Repositories
         [Fact]
         public void Update_Question_With_Title_Greater_Than_Max_Error()
         {
-            var option = new Option {Text = "Update_Question_With_Title_Greater_Than_Max_Error Option"};
+            var option = new Option { Text = "Update_Question_With_Title_Greater_Than_Max_Error Option" };
             var question = new Question
             {
                 Title = "Update_Question_With_Title_Greater_Than_Max_Error",
@@ -219,7 +219,7 @@ namespace BitcoinShow.Test.Repositories
 
             QuestionRepository repository = new QuestionRepository(context);
             question.Title = new String('a', 201);
-            ArgumentOutOfRangeException ex =  Assert.Throws<ArgumentOutOfRangeException>(() => repository.Update(question));
+            ArgumentOutOfRangeException ex = Assert.Throws<ArgumentOutOfRangeException>(() => repository.Update(question));
             Assert.NotNull(ex);
             Assert.Equal(nameof(question.Title), ex.ParamName);
         }
@@ -227,7 +227,7 @@ namespace BitcoinShow.Test.Repositories
         [Fact]
         public void Update_Question_Without_Answer_Error()
         {
-            var option = new Option {Text = "Update_Question_Without_Answer_Error Option"};
+            var option = new Option { Text = "Update_Question_Without_Answer_Error Option" };
             var question = new Question
             {
                 Title = "Update_Question_Without_Answer_Error",
@@ -239,7 +239,7 @@ namespace BitcoinShow.Test.Repositories
 
             QuestionRepository repository = new QuestionRepository(context);
             question.Answer = null;
-            ArgumentNullException ex =  Assert.Throws<ArgumentNullException>(() => repository.Update(question));
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => repository.Update(question));
             Assert.NotNull(ex);
             Assert.Equal(nameof(question.Answer), ex.ParamName);
         }
@@ -247,8 +247,8 @@ namespace BitcoinShow.Test.Repositories
         [Fact]
         public void Update_Question_Success()
         {
-            var option = new Option {Text = "Update_Question_Success Option"};
-            var option2 = new Option {Text = "Update_Question_Success Option2"};
+            var option = new Option { Text = "Update_Question_Success Option" };
+            var option2 = new Option { Text = "Update_Question_Success Option2" };
             var question = new Question
             {
                 Title = "Update_Question_Success",
@@ -284,12 +284,71 @@ namespace BitcoinShow.Test.Repositories
             Assert.Equal(expected, actual);
         }
 
+        [Fact]
+        public void Get_Random_Question_By_Level()
+        {
+            BitcoinShowDBContext context = DbContextFactory.GetContext();
+
+            #region mock data
+            int[] easyIds = new int[5];
+            int[] mediumIds = new int[5];
+            int[] hardIds = new int[5];
+            int[] veryHardIds = new int[5];
+            for (int i = 0; i < 5; i++)
+            {
+                Question easyQuestion = new Question();
+                easyQuestion.Answer = new Option { Text = "Option 1 easyQuestion ${easyQuestion.Id}", QuestionId = easyQuestion.Id };
+                easyQuestion.Title = "Question 1";
+                easyQuestion.Level = LevelEnum.Easy;
+                context.Questions.Add(easyQuestion);
+
+                Question mediumQuestion = new Question();
+                mediumQuestion.Answer = new Option { Text = "Option 1 mediumQuestion ${mediumQuestion.Id}", QuestionId = mediumQuestion.Id };
+                mediumQuestion.Title = "Question 1";
+                mediumQuestion.Level = LevelEnum.Medium;
+                context.Questions.Add(mediumQuestion);
+
+                Question hardQuestion = new Question();
+                hardQuestion.Answer = new Option { Text = "Option 1 hardQuestion ${hardQuestion.Id}", QuestionId = hardQuestion.Id };
+                hardQuestion.Title = "Question 1";
+                hardQuestion.Level = LevelEnum.Medium;
+                context.Questions.Add(hardQuestion);
+
+                Question veryHardQuestion = new Question();
+                veryHardQuestion.Answer = new Option { Text = "Option 1 veryHardQuestion ${veryHardQuestion.Id}", QuestionId = veryHardQuestion.Id };
+                veryHardQuestion.Title = "Question 1";
+                veryHardQuestion.Level = LevelEnum.Medium;
+                context.Questions.Add(veryHardQuestion);
+                context.SaveChanges();
+
+                easyIds[i] = easyQuestion.Id;
+                mediumIds[i] = mediumQuestion.Id;
+                hardIds[i] = hardQuestion.Id;
+                veryHardIds[i] = veryHardQuestion.Id;
+            }
+            #endregion mock data
+
+            QuestionRepository repository = new QuestionRepository(context);
+            Question question = repository.GetByLevel(LevelEnum.Easy, easyIds);
+            Assert.Null(question);
+
+            question = repository.GetByLevel(LevelEnum.Easy, new int[] { easyIds[0], easyIds[4] });
+            Assert.NotNull(question);
+            var filter = easyIds
+                .Select((value, index) => new {value, index})
+                .Where(item => item.index == 0 || item.index == 4)
+                .Select(item =>item.value);
+                
+            Assert.True(easyIds.Contains(question.Id));
+            Assert.False(filter.Contains(question.Id));
+        }
+
         private IEnumerable<Option> RandomOptions(int nOptions)
         {
             for (int i = 0; i < nOptions; i++)
             {
-                yield return new Option 
-                { 
+                yield return new Option
+                {
                     Text = $"Random Option {i + 1}"
                 };
             }

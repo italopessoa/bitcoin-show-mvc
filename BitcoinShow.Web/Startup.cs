@@ -46,6 +46,13 @@ namespace BitcoinShow.Web
             Mapper.Initialize(cfg => {
                 cfg.AddProfile<BitcoinShowProfile>();
             });
+                        services.AddMvc().AddJsonOptions(options =>
+            {
+            #if DEBUG
+                options.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
+            #endif
+                options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+            });
             IntegrateSimpleInjector(services);
         }
 
