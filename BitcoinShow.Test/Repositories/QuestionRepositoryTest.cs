@@ -291,9 +291,6 @@ namespace BitcoinShow.Test.Repositories
 
             #region mock data
             int[] easyIds = new int[5];
-            int[] mediumIds = new int[5];
-            int[] hardIds = new int[5];
-            int[] veryHardIds = new int[5];
             for (int i = 0; i < 4; i++)
             {
                 Question easyQuestion = new Question();

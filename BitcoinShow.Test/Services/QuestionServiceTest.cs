@@ -294,16 +294,16 @@ namespace BitcoinShow.Test.Services
         public void Get_Random_Question_By_Level()
         {
             Mock<IQuestionRepository> mockRepository = new Mock<IQuestionRepository>(MockBehavior.Strict);
-            mockRepository.Setup(s => s.GetByLevel(LevelEnum.Easy, new int[] { 1 })).Returns(new Question());
+            mockRepository.Setup(s => s.GetByLevel(LevelEnum.Easy, new [] { 1 })).Returns(new Question());
             mockRepository.Setup(s => s.GetByLevel(LevelEnum.Hard, new int[] { })).Returns(new Question());
 
             IQuestionService service = new QuestionService(mockRepository.Object);
-            Question question = service.GetByLevel(LevelEnum.Easy, new int[] { 1 });
+            Question question = service.GetByLevel(LevelEnum.Easy, new [] { 1 });
             Question question2 = service.GetByLevel(LevelEnum.Hard, null);
             Assert.NotNull(question);
             Assert.NotNull(question2);
 
-            mockRepository.Verify(r => r.GetByLevel(LevelEnum.Easy, new int[] { 1 }), Times.Once());
+            mockRepository.Verify(r => r.GetByLevel(LevelEnum.Easy, new [] { 1 }), Times.Once());
             mockRepository.Verify(r => r.GetByLevel(LevelEnum.Hard, new int[] { }), Times.Once());
         }
 
