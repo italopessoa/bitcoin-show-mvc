@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using BitcoinShow.Web.Models;
 using System.Collections.Generic;
 using BitcoinShow.Web.Facade.Interface;
+using Microsoft.AspNetCore.Cors;
 
 namespace BitcoinShow.Web.Controllers
 {
@@ -17,13 +18,13 @@ namespace BitcoinShow.Web.Controllers
         public IActionResult Index()
         {
             return View(this._bitcoinShowFacade.GetAllQuestions());
-        }   
+        }
 
         [HttpPost]
         public IActionResult Create(QuestionViewModel model)
         {
             this._bitcoinShowFacade.CreateQuestion(model);
-            return View("Index",this._bitcoinShowFacade.GetAllQuestions());
+            return View("Index", this._bitcoinShowFacade.GetAllQuestions());
         }
         public IActionResult Create()
         {
@@ -40,6 +41,18 @@ namespace BitcoinShow.Web.Controllers
         {
             this._bitcoinShowFacade.UpdateQuestion(questionViewModel);
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [EnableCors("enable-cors")]
+        public IActionResult RandomQuestionByLevel(LevelEnum level, [FromQuery] int[] excludeIds)
+        {
+            var question = _bitcoinShowFacade.GetRandomQuestionByLevel(level, excludeIds);
+            if (question != null)
+            {
+                return Ok(question);
+            }
+            return NotFound();
         }
     }
 }

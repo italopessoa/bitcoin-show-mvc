@@ -35,5 +35,13 @@ namespace BitcoinShow.Web.Services.Interface
         /// </summary>
         /// <param name="question"> Question object with value to update. </param>
         void Update(Question question);
+
+        /// <summary>
+        ///     Get a random question based on its Level
+        /// </summary>
+        /// <param name="level"> Question Level. </param>
+        /// <param name="exclude"> Questions Id that has already been selected before. </param>
+        /// <returns> QuestionViewModel </returns>
+        Question GetByLevel(LevelEnum level, int[] excludeIds);
     }
 }

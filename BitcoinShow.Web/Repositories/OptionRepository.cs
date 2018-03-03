@@ -81,7 +81,7 @@ namespace BitcoinShow.Web.Repositories
                     throw new ArgumentOutOfRangeException(nameof(option.Text));
                 }
             }
-            var actualOption = _context.Options.Find(option.Id);
+            Option actualOption = _context.Options.Find(option.Id);
             if (actualOption == null)
             {
                 throw new DbUpdateException("The current option does not exists.", new ArgumentNullException());
@@ -91,7 +91,6 @@ namespace BitcoinShow.Web.Repositories
                 actualOption.Text = option.Text;
                 _context.Options.Update(actualOption);
                 _context.SaveChanges();
-                option = actualOption;
             }
         }
     }

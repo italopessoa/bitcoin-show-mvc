@@ -46,6 +46,13 @@ namespace BitcoinShow.Web
             Mapper.Initialize(cfg => {
                 cfg.AddProfile<BitcoinShowProfile>();
             });
+                        services.AddMvc().AddJsonOptions(options =>
+            {
+            #if DEBUG
+                options.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
+            #endif
+                options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+            });
             IntegrateSimpleInjector(services);
         }
 
@@ -69,6 +76,7 @@ namespace BitcoinShow.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                GenerateMockQuestions();
             }
             else
             {
@@ -120,6 +128,67 @@ namespace BitcoinShow.Web
 
             // NOTE: Do prevent cross-wired instances as much as possible.
             // See: https://simpleinjector.org/blog/2016/07/
+        }
+        private void teste(BitcoinShowDBContext context, LevelEnum level, int quantidade)
+        {
+            for (int i = 0; i < quantidade; i++)
+            {
+                Question easyQuestion = new Question();
+                easyQuestion.Title = $"{level.GetEnumDisplayName()} Question {i}";
+                easyQuestion.Level = level;
+                List<Option> optionsList = new List<Option>
+                        {
+                            new Option{Text = $"{level.GetEnumDisplayName()} Question {i} option A"},
+                            new Option{Text = $"{level.GetEnumDisplayName()} Question {i} option B"},
+                            new Option{Text = $"{level.GetEnumDisplayName()} Question {i} option C"},
+                            new Option{Text = $"{level.GetEnumDisplayName()} Question {i} option D"},
+                        };
+                optionsList.ForEach(o =>
+                {
+                    context.Options.Add(o);
+                });
+                context.SaveChanges();
+
+                easyQuestion.Answer = optionsList[0];
+                context.Questions.Add(easyQuestion);
+
+                easyQuestion.Options = optionsList;
+                optionsList.ForEach(o =>
+                {
+                    o.Question = easyQuestion;
+                    context.Options.Update(o);
+                });
+                context.SaveChanges();
+            }
+        }
+        private void GenerateMockQuestions()
+        {
+            var cs = Configuration.GetConnectionString("SqlServer");
+            var options = new DbContextOptionsBuilder<BitcoinShowDBContext>()
+                .UseSqlServer(cs)
+                .Options;
+
+            using (var context = new BitcoinShowDBContext(options))
+            {
+                context.Database.Migrate();
+                context.Database.EnsureCreated();
+
+                context.Options.ToList().ForEach(o =>
+                {
+                    o.Question = null;
+                    o.QuestionId = null;
+                    context.Options.Update(o);
+                });
+                context.SaveChanges();
+                context.Questions.RemoveRange(context.Questions);
+                context.Options.RemoveRange(context.Options);
+                context.SaveChanges();
+
+                teste(context, LevelEnum.Easy, 2);
+                teste(context, LevelEnum.Medium, 2);
+                teste(context, LevelEnum.Hard, 2);
+                teste(context, LevelEnum.VeryHard, 2);
+            };
         }
     }
 }

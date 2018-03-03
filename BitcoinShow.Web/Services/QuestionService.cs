@@ -37,5 +37,11 @@ namespace BitcoinShow.Web.Services
         {
             _repository.Update(quesiton);
         }
+
+        public Question GetByLevel(LevelEnum level, int[] excludeIds)
+        {
+            var idToIgnore = excludeIds != null ? excludeIds : new int[]{};
+            return _repository.GetByLevel(level, idToIgnore);
+        }
     }
 }

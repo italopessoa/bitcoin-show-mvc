@@ -167,5 +167,10 @@ namespace BitcoinShow.Web.Facade
         {
             _awardService.Delete(id);
         }
-    }
+
+        public QuestionViewModel GetRandomQuestionByLevel(LevelEnum level, int[] exclude)
+        {
+            return Mapper.Map<QuestionViewModel>(_questionService.GetByLevel(level, exclude));
+        }
+  }
 }

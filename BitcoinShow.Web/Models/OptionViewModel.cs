@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace BitcoinShow.Web.Models
 {
@@ -16,6 +17,7 @@ namespace BitcoinShow.Web.Models
         [MaxLength(200)]
         public string Text { get; set; }
 
+        [JsonIgnore]
         public int QuestionId { get; set; }
     }
 }
