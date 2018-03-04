@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitcoinShow.Neo4j.Core", "BitcoinShow.Neo4j.Core\BitcoinShow.Neo4j.Core.csproj", "{BC62218E-C8E0-47A2-8F0E-080E3AC37301}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitcoinShow.Neo4j.Facade", "BitcoinShow.Neo4j.Facade\BitcoinShow.Neo4j.Facade.csproj", "{1876EC60-9D03-46A9-A0FF-5CC677E4E6E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitcoinShow.Neo4j.Facade.Test", "BitcoinShow.Neo4j.Facade.Test\BitcoinShow.Neo4j.Facade.Test.csproj", "{6680D17E-444A-4183-90A6-DDA54955DDD3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BC62218E-C8E0-47A2-8F0E-080E3AC37301}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC62218E-C8E0-47A2-8F0E-080E3AC37301}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC62218E-C8E0-47A2-8F0E-080E3AC37301}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC62218E-C8E0-47A2-8F0E-080E3AC37301}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1876EC60-9D03-46A9-A0FF-5CC677E4E6E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1876EC60-9D03-46A9-A0FF-5CC677E4E6E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1876EC60-9D03-46A9-A0FF-5CC677E4E6E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1876EC60-9D03-46A9-A0FF-5CC677E4E6E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6680D17E-444A-4183-90A6-DDA54955DDD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6680D17E-444A-4183-90A6-DDA54955DDD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6680D17E-444A-4183-90A6-DDA54955DDD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6680D17E-444A-4183-90A6-DDA54955DDD3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6397DE54-374F-4906-ADA3-FEB356FA2C6C}
+	EndGlobalSection
+EndGlobal
