@@ -12,4 +12,8 @@
     <DocumentationFile>bin\Release\netcoreapp2.0\BitcoinShow.Neo4j.Core.xml</DocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Neo4j.Driver" Version="1.5.2" />
+  </ItemGroup>
+
 </Project>
