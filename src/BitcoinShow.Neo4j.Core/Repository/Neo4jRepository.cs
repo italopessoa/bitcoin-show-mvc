@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BitcoinShow.Neo4j.Core.Attributes;
 using BitcoinShow.Neo4j.Core.Repository.Interface;
 using Neo4j.Driver.V1;
+using BitcoinShow.Neo4j.Core.Extensions;
 
 namespace BitcoinShow.Neo4j.Core
 {
@@ -45,18 +47,17 @@ namespace BitcoinShow.Neo4j.Core
         /// </code>
         /// </example>
         /// <remarks>The uuid is not returned when a node is created.</remarks>
-        public async Task<INode> CreateCypherAsync(string query)
+        public async Task<T> CreateCypherAsync<T>(string query) where T : Neo4jNode
         {
             using (ISession session = _driver.Session(AccessMode.Write))
             {
                 IStatementResultCursor result = await session.RunAsync(query);
-                INode node = null;
+                T node = null;
                 if (await result.FetchAsync())
                 {
-                    node = result.Current[result.Keys[0]].As<INode>();
+                    node = result.Current[result.Keys[0]].Map<T>();
                 }
                 return node;
-
             }
         }
 
@@ -72,7 +73,7 @@ namespace BitcoinShow.Neo4j.Core
         /// MATCH (p:Person {uuid: '75e88b00-1fc6-11e8-b7fc-2cd05a628834'}) RETURN p
         /// </code>
         /// </example>
-        public async Task<INode> MatchLabelByUUIDCypherAsync(string label, string uuid)
+        public async Task<T> MatchLabelByUUIDCypherAsync<T>(string label, string uuid) where T : Neo4jNode
         {
             if (string.IsNullOrEmpty(label) || string.IsNullOrWhiteSpace(label))
                 throw new ArgumentNullException(nameof(label));
@@ -84,10 +85,11 @@ namespace BitcoinShow.Neo4j.Core
                 List<INode> nodes = new List<INode>();
                 IStatementResultCursor result = await session.RunAsync($"MATCH (label:{label} {{uuid: '{uuid}' }}) RETURN label");
 
-                INode node = null;
+                T node = null;
                 if (await result.FetchAsync())
                 {
-                    node = result.Current[result.Current.Keys[0]].As<INode>();
+                    //node = result.Current[result.Current.Keys[0]].As<INode>();
+                    node = result.Current[result.Current.Keys[0]].Map<T>();
                 }
                 return node;
             }
@@ -104,15 +106,15 @@ namespace BitcoinShow.Neo4j.Core
         /// MATCH (key:Person) RETURN key
         /// </code>
         /// </example>
-        public async Task<List<INode>> MatchSingleKeyCypherAsync(string query)
+        public async Task<List<T>> MatchSingleKeyCypherAsync<T>(string query) where T : Neo4jNode
         {
             using (ISession session = _driver.Session(AccessMode.Read))
             {
-                List<INode> nodes = new List<INode>();
+                List<T> nodes = new List<T>();
                 IStatementResultCursor result = await session.RunAsync(query);
                 await result.ForEachAsync(r =>
                 {
-                    nodes.Add(r.Keys[0].As<INode>());
+                    nodes.Add(r.Keys[0].Map<T>());
                 });
                 return nodes;
             }
@@ -129,7 +131,7 @@ namespace BitcoinShow.Neo4j.Core
         /// MATCH (p:Person {uuid: '75e88b00-1fc6-11e8-b7fc-2cd05a628834'}) DETACH DELETE p
         /// </code>
         /// </example>
-        public async Task DeleteLabelByUUIDCypherAsync(string label, string uuid)
+        public async Task DeleteLabelByUUIDCypherAsync<T>(string label, string uuid) where T : Neo4jNode
         {
             using (ISession session = _driver.Session(AccessMode.Write))
             {
@@ -145,5 +147,30 @@ namespace BitcoinShow.Neo4j.Core
         {
             _driver.Dispose();
         }
+    }
+
+    
+
+    
+
+   
+
+
+    [Neo4jLabel("Question")]
+    public class Question : Neo4jNode
+    {
+        public Question()
+        {
+
+        }
+
+        [Neo4jProperty(Name = "title")]
+        public string Title { get; set; }
+
+        [Neo4jProperty(Name = "correct_answer")]
+        public string CorrectAnswer { get; set; }
+
+        [Neo4jProperty(Name = "incorrect_answers")]
+        public List<object> IncorrectAnswers { get; set; }
     }
 }
