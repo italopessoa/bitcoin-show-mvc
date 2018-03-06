@@ -9,7 +9,7 @@ using BitcoinShow.Neo4j.Core.Extensions;
 namespace BitcoinShow.Neo4j.Core
 {
     /// <summary>
-    /// Neo4j Repository
+    /// Neo4j Repository implementation
     /// </summary>
     public class Neo4jRepository : INeo4jRepository
     {
@@ -21,6 +21,9 @@ namespace BitcoinShow.Neo4j.Core
         /// <param name="uri">Neo4j bolt uri like bolt://127.0.0.1:7687</param>
         public Neo4jRepository(string uri)
         {
+            if (string.IsNullOrEmpty(uri) || string.IsNullOrWhiteSpace(uri))
+                throw new ArgumentNullException(nameof(uri));
+
             _driver = GraphDatabase.Driver(uri, AuthTokens.None);
         }
 
@@ -32,6 +35,15 @@ namespace BitcoinShow.Neo4j.Core
         /// <param name="password">Password</param>
         public Neo4jRepository(string uri, string username, string password)
         {
+            if (string.IsNullOrEmpty(uri) || string.IsNullOrWhiteSpace(uri))
+                throw new ArgumentNullException(nameof(uri));
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrWhiteSpace(username))
+                throw new ArgumentNullException(nameof(username));
+
+            if (string.IsNullOrEmpty(password) || string.IsNullOrWhiteSpace(password))
+                throw new ArgumentNullException(nameof(password));
+
             _driver = GraphDatabase.Driver(uri, AuthTokens.Basic(username, password));
         }
 
@@ -49,6 +61,9 @@ namespace BitcoinShow.Neo4j.Core
         /// <remarks>The uuid is not returned when a node is created.</remarks>
         public async Task<T> CreateCypherAsync<T>(string query) where T : Neo4jNode
         {
+            if (string.IsNullOrEmpty(query) || string.IsNullOrWhiteSpace(query))
+                throw new ArgumentNullException(nameof(query));
+
             using (ISession session = _driver.Session(AccessMode.Write))
             {
                 IStatementResultCursor result = await session.RunAsync(query);
@@ -77,6 +92,7 @@ namespace BitcoinShow.Neo4j.Core
         {
             if (string.IsNullOrEmpty(label) || string.IsNullOrWhiteSpace(label))
                 throw new ArgumentNullException(nameof(label));
+
             if (string.IsNullOrEmpty(uuid) || string.IsNullOrWhiteSpace(uuid))
                 throw new ArgumentNullException(nameof(uuid));
 
@@ -88,7 +104,6 @@ namespace BitcoinShow.Neo4j.Core
                 T node = null;
                 if (await result.FetchAsync())
                 {
-                    //node = result.Current[result.Current.Keys[0]].As<INode>();
                     node = result.Current[result.Current.Keys[0]].Map<T>();
                 }
                 return node;
@@ -108,6 +123,9 @@ namespace BitcoinShow.Neo4j.Core
         /// </example>
         public async Task<List<T>> MatchSingleKeyCypherAsync<T>(string query) where T : Neo4jNode
         {
+            if (string.IsNullOrEmpty(query) || string.IsNullOrWhiteSpace(query))
+                throw new ArgumentNullException(nameof(query));
+
             using (ISession session = _driver.Session(AccessMode.Read))
             {
                 List<T> nodes = new List<T>();
@@ -133,6 +151,12 @@ namespace BitcoinShow.Neo4j.Core
         /// </example>
         public async Task DeleteLabelByUUIDCypherAsync<T>(string label, string uuid) where T : Neo4jNode
         {
+            if (string.IsNullOrEmpty(label) || string.IsNullOrWhiteSpace(label))
+                throw new ArgumentNullException(nameof(label));
+
+            if (string.IsNullOrEmpty(uuid) || string.IsNullOrWhiteSpace(uuid))
+                throw new ArgumentNullException(nameof(uuid));
+
             using (ISession session = _driver.Session(AccessMode.Write))
             {
                 List<INode> nodes = new List<INode>();
@@ -148,13 +172,6 @@ namespace BitcoinShow.Neo4j.Core
             _driver.Dispose();
         }
     }
-
-    
-
-    
-
-   
-
 
     [Neo4jLabel("Question")]
     public class Question : Neo4jNode

@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BitcoinShow.Neo4j.Core.Extensions;
-using Neo4j.Driver.V1;
 
 namespace BitcoinShow.Neo4j.Core.Repository.Interface
 {
     /// <summary>
-    /// Neo4j query methods definition
+    /// Neo4j Repository definition
     /// </summary>
     internal interface INeo4jRepository : IDisposable
     {
