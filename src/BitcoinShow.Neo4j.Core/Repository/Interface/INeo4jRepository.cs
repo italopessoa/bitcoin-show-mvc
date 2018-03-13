@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BitcoinShow.Neo4j.Core.Extensions;
+using Neo4j.Map.Extension.Model;
 
 namespace BitcoinShow.Neo4j.Core.Repository.Interface
 {

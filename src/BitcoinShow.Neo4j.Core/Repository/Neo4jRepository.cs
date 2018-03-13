@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BitcoinShow.Neo4j.Core.Attributes;
 using BitcoinShow.Neo4j.Core.Repository.Interface;
 using Neo4j.Driver.V1;
-using BitcoinShow.Neo4j.Core.Extensions;
+using Neo4j.Map.Extension.Attributes;
+using Neo4j.Map.Extension.Map;
+using Neo4j.Map.Extension.Model;
 
 namespace BitcoinShow.Neo4j.Core
 {
@@ -132,7 +133,7 @@ namespace BitcoinShow.Neo4j.Core
                 IStatementResultCursor result = await session.RunAsync(query);
                 await result.ForEachAsync(r =>
                 {
-                    nodes.Add(r.Keys[0].Map<T>());
+                    nodes.Add(r[r.Keys[0]].Map<T>());
                 });
                 return nodes;
             }

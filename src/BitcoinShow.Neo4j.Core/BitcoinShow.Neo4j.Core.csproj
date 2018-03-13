@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="Neo4j.Driver" Version="1.5.2" />
+    <PackageReference Include="Neo4j.Map.Extension" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
