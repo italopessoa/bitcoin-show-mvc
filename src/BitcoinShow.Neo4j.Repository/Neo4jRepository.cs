@@ -173,22 +173,4 @@ namespace BitcoinShow.Neo4j.Repository
             _driver.Dispose();
         }
     }
-
-    [Neo4jLabel("Question")]
-    public class Question : Neo4jNode
-    {
-        public Question()
-        {
-
-        }
-
-        [Neo4jProperty(Name = "title")]
-        public string Title { get; set; }
-
-        [Neo4jProperty(Name = "correct_answer")]
-        public string CorrectAnswer { get; set; }
-
-        [Neo4jProperty(Name = "incorrect_answers")]
-        public List<object> IncorrectAnswers { get; set; }
-    }
 }
