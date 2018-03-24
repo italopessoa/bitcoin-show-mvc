@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BitcoinShow.Neo4j.Core\BitcoinShow.Neo4j.Core.csproj" />
+    <ProjectReference Include="..\BitcoinShow.Neo4j.Repository\BitcoinShow.Neo4j.Repository.csproj" />
+  </ItemGroup>
+
+</Project>
