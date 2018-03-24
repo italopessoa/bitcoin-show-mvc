@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BitcoinShow.Neo4j.Core.Repository.Interface;
+using BitcoinShow.Neo4j.Repository.Interface;
 using Neo4j.Driver.V1;
 using Neo4j.Map.Extension.Attributes;
 using Neo4j.Map.Extension.Map;
 using Neo4j.Map.Extension.Model;
 
-namespace BitcoinShow.Neo4j.Core
+namespace BitcoinShow.Neo4j.Repository
 {
     /// <summary>
     /// Neo4j Repository implementation

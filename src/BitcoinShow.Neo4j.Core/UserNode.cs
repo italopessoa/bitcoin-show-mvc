@@ -1,7 +1,7 @@
 ﻿using Neo4j.Map.Extension.Attributes;
 using Neo4j.Map.Extension.Model;
 
-namespace BitcoinShow.Neo4j.Facade.Model
+namespace BitcoinShow.Neo4j.Core
 {
     /// <summary>
     /// 

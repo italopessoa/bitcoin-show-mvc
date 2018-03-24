@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Neo4j.Map.Extension.Model;
 
-namespace BitcoinShow.Neo4j.Core.Repository.Interface
+namespace BitcoinShow.Neo4j.Repository.Interface
 {
     /// <summary>
     /// Neo4j Repository definition

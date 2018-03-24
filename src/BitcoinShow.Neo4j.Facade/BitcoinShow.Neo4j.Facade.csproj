@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Neo4j.Map.Extension" Version="1.0.0" />
+    <PackageReference Include="Neo4j.Map.Extension" Version="1.1.0-alpha" />
   </ItemGroup>
 
   <ItemGroup>
