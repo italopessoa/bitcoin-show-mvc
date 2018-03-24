@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BitcoinShow.Neo4j.Core\BitcoinShow.Neo4j.Core.csproj" />
+    <ProjectReference Include="..\BitcoinShow.Neo4j.Repository\BitcoinShow.Neo4j.Repository.csproj" />
   </ItemGroup>
 
 </Project>

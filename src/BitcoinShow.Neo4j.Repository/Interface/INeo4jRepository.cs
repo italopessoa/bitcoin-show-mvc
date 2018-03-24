@@ -8,7 +8,7 @@ namespace BitcoinShow.Neo4j.Repository.Interface
     /// <summary>
     /// Neo4j Repository definition
     /// </summary>
-    internal interface INeo4jRepository : IDisposable
+    public interface INeo4jRepository : IDisposable
     {
         /// <summary>
         /// Create a new node

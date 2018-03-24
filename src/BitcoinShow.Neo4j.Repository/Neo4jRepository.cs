@@ -17,6 +17,15 @@ namespace BitcoinShow.Neo4j.Repository
         private readonly IDriver _driver;
 
         /// <summary>
+        /// Default constructor
+        /// </summary>
+        /// <remarks>Uses bolt://127.0.0.1:7687 as default uri.</remarks>
+        public Neo4jRepository()
+        {
+            _driver = GraphDatabase.Driver("bolt://127.0.0.1:7687", AuthTokens.None);
+        }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="uri">Neo4j bolt uri like bolt://127.0.0.1:7687</param>
