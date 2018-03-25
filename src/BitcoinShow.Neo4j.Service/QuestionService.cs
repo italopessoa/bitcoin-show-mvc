@@ -10,16 +10,16 @@ using Neo4j.Map.Extension.Model;
 
 namespace BitcoinShow.Neo4j.Service
 {
-    public class Neo4jService : INeo4jService
+    public class QuestionService : INeo4jService<QuestionNode>
     {
         private readonly INeo4jRepository _repository;
 
-        public Neo4jService(INeo4jRepository repository)
+        public QuestionService(INeo4jRepository repository)
         {
             _repository = repository;
         }
 
-        public async Task<QuestionNode> CreateQuestionAsync(QuestionNode question)
+        public async Task<QuestionNode> CreateAsync(QuestionNode question)
         {
             if (question.Id > 0)
                 throw new ArgumentException("Id value must be 0 on creation.", nameof(question.Id));
@@ -35,23 +35,22 @@ namespace BitcoinShow.Neo4j.Service
             return await _repository.CreateCypherAsync<QuestionNode>(question.MapToCypher(CypherQueryType.Create));
         }
 
-        public Task<bool> DeleteQuestionByUUIDAsync(string uuid)
+        public Task<List<QuestionNode>> MatchByPropertiesAsync(QuestionNode question)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<QuestionNode> MatchByUUIDAsync(string uuid)
+        {
+            if (string.IsNullOrEmpty(uuid) || string.IsNullOrWhiteSpace(uuid))
+                throw new ArgumentException("UUID can't be empty", nameof(uuid));
+            throw new NotImplementedException();
+        }
+        public Task<bool> DeleteByUUIDAsync(string uuid)
         {
             if (string.IsNullOrEmpty(uuid) || string.IsNullOrWhiteSpace(uuid))
                 throw new ArgumentException("UUID can't be empty", nameof(uuid));
 
-            throw new NotImplementedException();
-        }
-
-        public Task<List<QuestionNode>> MatchQuestionByPropertiesAsync(QuestionNode question)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<QuestionNode> MatchQuestionByUUIDAsync(QuestionNode question)
-        {
-            if (string.IsNullOrEmpty(question.UUID) || string.IsNullOrWhiteSpace(question.UUID))
-                throw new ArgumentException("UUID can't be empty", nameof(question.UUID));
             throw new NotImplementedException();
         }
     }

@@ -8,5 +8,9 @@
     <ProjectReference Include="..\BitcoinShow.Neo4j.Core\BitcoinShow.Neo4j.Core.csproj" />
     <ProjectReference Include="..\BitcoinShow.Neo4j.Repository\BitcoinShow.Neo4j.Repository.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Neo4j.Map.Extension" Version="1.1.0-alpha" />
+  </ItemGroup>
 
 </Project>
