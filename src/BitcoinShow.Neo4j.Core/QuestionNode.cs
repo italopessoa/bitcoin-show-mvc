@@ -32,8 +32,13 @@ namespace BitcoinShow.Neo4j.Core
         /// <summary>
         /// 
         /// </summary>
-        public QuestionNode()
+        public QuestionNode(string title, QuestionDifficulty difficulty, QuestionType type, string correctAnswer, List<object> incorrectAnswers)
         {
+            this.Title = title;
+            this.Difficulty = difficulty;
+            this.Type = type;
+            this.CorrectAnswer = correctAnswer;
+            this.IncorrectAnswers = incorrectAnswers;
         }
 
         /// <summary>
