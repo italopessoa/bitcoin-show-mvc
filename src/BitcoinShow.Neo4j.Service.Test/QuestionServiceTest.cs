@@ -102,6 +102,18 @@ namespace BitcoinShow.Neo4j.Service.Test
             repositoryMock.Verify(m => m.CreateCypherAsync<QuestionNode>(It.IsAny<string>()), Times.Once());
         }
 
+        [Fact]
+        public async void MatchQuestionByPropertiesAsync_Error_Test()
+        {
+            QuestionNode question = null;
+            Mock<INeo4jRepository> repositoryMock = new Mock<INeo4jRepository>(MockBehavior.Strict);
+            INeo4jService<QuestionNode> service = new QuestionService(repositoryMock.Object);
+            ArgumentNullException exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.MatchByPropertiesAsync(question));
+            Assert.NotNull(exception);
+            Assert.Equal("question", exception.ParamName);
+            repositoryMock.Verify(m => m.MatchSingleKeyCypherAsync<QuestionNode>(It.IsAny<string>()), Times.Never());
+        }
+
         [Fact(Skip = "todo")]
         public async void MatchQuestionByPropertiesAsyncTest()
         {

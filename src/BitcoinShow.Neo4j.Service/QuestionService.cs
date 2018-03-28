@@ -37,6 +37,9 @@ namespace BitcoinShow.Neo4j.Service
 
         public async Task<List<QuestionNode>> MatchByPropertiesAsync(QuestionNode question)
         {
+            if (question == null)
+                throw new ArgumentNullException(nameof(question));
+
             return await _repository.MatchSingleKeyCypherAsync<QuestionNode>(question.MapToCypher(CypherQueryType.Match));
         }
 
