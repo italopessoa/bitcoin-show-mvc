@@ -156,21 +156,17 @@ namespace BitcoinShow.Neo4j.Repository
         /// /// <example> 
         /// This sample shows how write a cypher query to call the <see cref="DeleteLabelByUUIDCypherAsync(string, string)"/> method.
         /// <code>
-        /// MATCH (p:Person {uuid: '75e88b00-1fc6-11e8-b7fc-2cd05a628834'}) DETACH DELETE p
+        /// MATCH (p {uuid: '75e88b00-1fc6-11e8-b7fc-2cd05a628834'}) DETACH DELETE p
         /// </code>
         /// </example>
-        public async Task DeleteLabelByUUIDCypherAsync<T>(string label, string uuid) where T : Neo4jNode
+        public async Task DeleteLabelByUUIDCypherAsync(string uuid)
         {
-            if (string.IsNullOrEmpty(label) || string.IsNullOrWhiteSpace(label))
-                throw new ArgumentNullException(nameof(label));
-
             if (string.IsNullOrEmpty(uuid) || string.IsNullOrWhiteSpace(uuid))
                 throw new ArgumentNullException(nameof(uuid));
 
             using (ISession session = _driver.Session(AccessMode.Write))
             {
-                List<INode> nodes = new List<INode>();
-                await session.RunAsync($"MATCH (label:{label} {{uuid: '{uuid}' }}) DETACH DELETE label");
+                await session.RunAsync($"MATCH (n {{uuid: '{uuid}' }}) DETACH DELETE n");
             }
         }
 

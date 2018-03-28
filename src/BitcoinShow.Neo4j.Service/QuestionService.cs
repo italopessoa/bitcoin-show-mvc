@@ -35,23 +35,32 @@ namespace BitcoinShow.Neo4j.Service
             return await _repository.CreateCypherAsync<QuestionNode>(question.MapToCypher(CypherQueryType.Create));
         }
 
-        public Task<List<QuestionNode>> MatchByPropertiesAsync(QuestionNode question)
+        public async Task<List<QuestionNode>> MatchByPropertiesAsync(QuestionNode question)
         {
-            throw new NotImplementedException();
+            return await _repository.MatchSingleKeyCypherAsync<QuestionNode>(question.MapToCypher(CypherQueryType.Match));
         }
 
-        public Task<QuestionNode> MatchByUUIDAsync(string uuid)
-        {
-            if (string.IsNullOrEmpty(uuid) || string.IsNullOrWhiteSpace(uuid))
-                throw new ArgumentException("UUID can't be empty", nameof(uuid));
-            throw new NotImplementedException();
-        }
-        public Task<bool> DeleteByUUIDAsync(string uuid)
+        public async Task<QuestionNode> MatchByUUIDAsync(string uuid)
         {
             if (string.IsNullOrEmpty(uuid) || string.IsNullOrWhiteSpace(uuid))
                 throw new ArgumentException("UUID can't be empty", nameof(uuid));
 
-            throw new NotImplementedException();
+            return await _repository.MatchLabelByUUIDCypherAsync<QuestionNode>("Quesion", uuid);
+        }
+        public async Task<bool> DeleteByUUIDAsync(string uuid)
+        {
+            if (string.IsNullOrEmpty(uuid) || string.IsNullOrWhiteSpace(uuid))
+                throw new ArgumentException("UUID can't be empty", nameof(uuid));
+
+            try
+            {
+                await _repository.DeleteLabelByUUIDCypherAsync(uuid);
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }
