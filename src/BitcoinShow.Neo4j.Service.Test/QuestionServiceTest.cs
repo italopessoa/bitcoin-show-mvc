@@ -114,12 +114,35 @@ namespace BitcoinShow.Neo4j.Service.Test
             repositoryMock.Verify(m => m.MatchSingleKeyCypherAsync<QuestionNode>(It.IsAny<string>()), Times.Never());
         }
 
-        [Fact(Skip = "todo")]
+        [Fact]
         public async void MatchQuestionByPropertiesAsyncTest()
         {
+            QuestionNode question1 = new QuestionNode("question", QuestionDifficulty.Hard, QuestionType.Boolean, "false", new List<object> { "true" });
+            QuestionNode question2 = new QuestionNode("question 2", QuestionDifficulty.Medium, QuestionType.Boolean, "true", new List<object> { "false" })
+            {
+                UUID = Guid.NewGuid().ToString()
+            };
+            QuestionNode question3 = new QuestionNode()
+            {
+                Title = "question"
+            };
+            List<QuestionNode> questions = new List<QuestionNode>
+            {
+                question1,
+                question2,
+                question3
+            };
+
             Mock<INeo4jRepository> repositoryMock = new Mock<INeo4jRepository>(MockBehavior.Strict);
+            repositoryMock.Setup(s => s.MatchSingleKeyCypherAsync<QuestionNode>(question3.MapToCypher(CypherQueryType.Match))).
+                Returns(Task.FromResult(questions));
+
             INeo4jService<QuestionNode> service = new QuestionService(repositoryMock.Object);
-            await service.CreateAsync(null);
+            List<QuestionNode> actual = await service.MatchByPropertiesAsync(question3);
+            Assert.NotNull(actual);
+            Assert.NotEmpty(actual);
+            Assert.Equal(questions, actual);
+            repositoryMock.Verify(m => m.MatchSingleKeyCypherAsync<QuestionNode>(question3.MapToCypher(CypherQueryType.Match)), Times.Once());
         }
 
         [Fact(Skip = "todo")]
