@@ -20,7 +20,7 @@ namespace BitcoinShow.Neo4j.Service.Test
         {
             Mock<INeo4jRepository> repositoryMock = new Mock<INeo4jRepository>(MockBehavior.Strict);
             INeo4jService<QuestionNode> service = new QuestionService(repositoryMock.Object);
-            QuestionNode question = new QuestionNode("question 1", default(QuestionDifficulty), default(QuestionType), " correct", new List<object> { "incorrect" });
+            QuestionNode question = new QuestionNode("question 1", default(QuestionDifficulty), default(QuestionType), "correct", new List<object> { "incorrect" });
             question.Id = 1;
             ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(async () => await service.CreateAsync(question));
             Assert.NotNull(exception);
@@ -33,7 +33,7 @@ namespace BitcoinShow.Neo4j.Service.Test
         {
             Mock<INeo4jRepository> repositoryMock = new Mock<INeo4jRepository>(MockBehavior.Strict);
             INeo4jService<QuestionNode> service = new QuestionService(repositoryMock.Object);
-            QuestionNode question = new QuestionNode("question 1", default(QuestionDifficulty), default(QuestionType), " correct", new List<object> { "incorrect" });
+            QuestionNode question = new QuestionNode("question 1", default(QuestionDifficulty), default(QuestionType), "correct", new List<object> { "incorrect" });
             question.UUID = Guid.NewGuid().ToString();
             ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(async () => await service.CreateAsync(question));
             Assert.NotNull(exception);
@@ -145,20 +145,67 @@ namespace BitcoinShow.Neo4j.Service.Test
             repositoryMock.Verify(m => m.MatchSingleKeyCypherAsync<QuestionNode>(question3.MapToCypher(CypherQueryType.Match)), Times.Once());
         }
 
-        [Fact(Skip = "todo")]
-        public async void MatchQuestionByUUIDAsync()
+        [Fact]
+        public async void MatchQuestionByUUIDAsync_EmptyUUID_Error_Test()
         {
             Mock<INeo4jRepository> repositoryMock = new Mock<INeo4jRepository>(MockBehavior.Strict);
             INeo4jService<QuestionNode> service = new QuestionService(repositoryMock.Object);
-            await service.MatchByUUIDAsync(null);
+            ArgumentNullException exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.MatchByUUIDAsync(string.Empty));
+            Assert.NotNull(exception);
+            Assert.Equal("uuid", exception.ParamName);
+            repositoryMock.Verify(m => m.MatchLabelByUUIDCypherAsync<QuestionNode>(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
         }
 
-        [Fact(Skip = "todo")]
-        public async void DeleteQuestionByUUIDAsync()
+        [Fact]
+        public async void MatchQuestionByUUIDAsync()
+        {
+            string uuid = Guid.NewGuid().ToString();
+            QuestionNode expected = new QuestionNode("question 2", QuestionDifficulty.Medium, QuestionType.Boolean, "true", new List<object> { "false" })
+            {
+                UUID = uuid
+            };
+            Mock<INeo4jRepository> repositoryMock = new Mock<INeo4jRepository>(MockBehavior.Strict);
+            repositoryMock.Setup(s => s.MatchLabelByUUIDCypherAsync<QuestionNode>("Question", uuid)).
+                Returns(Task.FromResult(expected));
+
+            INeo4jService<QuestionNode> service = new QuestionService(repositoryMock.Object);
+            QuestionNode actual = await service.MatchByUUIDAsync(uuid);
+            Assert.NotNull(actual);
+            Assert.Equal(expected, actual);
+            repositoryMock.Verify(m => m.MatchLabelByUUIDCypherAsync<QuestionNode>("Question", uuid), Times.Once());
+        }
+
+        [Fact]
+        public async void DeleteQuestionByUUIDAsync_EmptyUUID_Error_Test()
         {
             Mock<INeo4jRepository> repositoryMock = new Mock<INeo4jRepository>(MockBehavior.Strict);
             INeo4jService<QuestionNode> service = new QuestionService(repositoryMock.Object);
-            await service.DeleteByUUIDAsync(null);
+            ArgumentNullException exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.DeleteByUUIDAsync(null));
+            Assert.NotNull(exception);
+            Assert.Equal("uuid", exception.ParamName);
+            repositoryMock.Verify(m => m.DeleteLabelByUUIDCypherAsync(It.IsAny<string>()), Times.Never());
+        }
+
+        [Fact]
+        public async void DeleteQuestionByUUIDAsync_False_Test()
+        {
+            string uuid = "b6d1eca0-2fe4-11e8-bcfe-2cd05a628834";
+            Mock<INeo4jRepository> repositoryMock = new Mock<INeo4jRepository>(MockBehavior.Strict);
+            repositoryMock.Setup(s => s.DeleteLabelByUUIDCypherAsync(uuid)).ThrowsAsync(new Exception());
+            INeo4jService<QuestionNode> service = new QuestionService(repositoryMock.Object);
+            Assert.False(await service.DeleteByUUIDAsync(uuid));
+            repositoryMock.Verify(m => m.DeleteLabelByUUIDCypherAsync(uuid), Times.Once());
+        }
+
+        [Fact]
+        public async void DeleteQuestionByUUIDAsync_Test()
+        {
+            string uuid = "b6d1eca0-2fe4-11e8-bcfe-2cd05a628834";
+            Mock<INeo4jRepository> repositoryMock = new Mock<INeo4jRepository>(MockBehavior.Strict);
+            repositoryMock.Setup(s => s.DeleteLabelByUUIDCypherAsync(uuid)).Returns(Task.FromResult(0));
+            INeo4jService<QuestionNode> service = new QuestionService(repositoryMock.Object);
+            Assert.True(await service.DeleteByUUIDAsync(uuid));
+            repositoryMock.Verify(m => m.DeleteLabelByUUIDCypherAsync(uuid), Times.Once());
         }
     }
 }

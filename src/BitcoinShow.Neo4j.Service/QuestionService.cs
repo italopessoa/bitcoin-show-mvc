@@ -46,20 +46,20 @@ namespace BitcoinShow.Neo4j.Service
         public async Task<QuestionNode> MatchByUUIDAsync(string uuid)
         {
             if (string.IsNullOrEmpty(uuid) || string.IsNullOrWhiteSpace(uuid))
-                throw new ArgumentException("UUID can't be empty", nameof(uuid));
+                throw new ArgumentNullException(nameof(uuid), "UUID can't be empty");
 
-            return await _repository.MatchLabelByUUIDCypherAsync<QuestionNode>("Quesion", uuid);
+            return await _repository.MatchLabelByUUIDCypherAsync<QuestionNode>("Question", uuid);
         }
         public async Task<bool> DeleteByUUIDAsync(string uuid)
         {
             if (string.IsNullOrEmpty(uuid) || string.IsNullOrWhiteSpace(uuid))
-                throw new ArgumentException("UUID can't be empty", nameof(uuid));
+                throw new ArgumentNullException(nameof(uuid), "UUID can't be empty");
 
             try
             {
                 await _repository.DeleteLabelByUUIDCypherAsync(uuid);
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
                 return false;
             }
