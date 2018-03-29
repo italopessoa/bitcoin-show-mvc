@@ -30,6 +30,12 @@ namespace BitcoinShow.Neo4j.Core
     public class QuestionNode : Neo4jNode
     {
         /// <summary>
+        /// Default constructor
+        /// </summary>
+        public QuestionNode()
+        {
+        }
+        /// <summary>
         /// 
         /// </summary>
         public QuestionNode(string title, QuestionDifficulty difficulty, QuestionType type, string correctAnswer, List<object> incorrectAnswers)
