@@ -14,7 +14,10 @@
 
   <ItemGroup>
     <PackageReference Include="Neo4j.Driver" Version="1.5.2" />
-    <PackageReference Include="Neo4j.Map.Extension" Version="1.1.0-beta" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Users\italo\Documents\Visual Studio 2017\Projects\Neo4j.Map.Extension\src\Neo4j.Map.Extension\Neo4j.Map.Extension.csproj" />
   </ItemGroup>
 
 </Project>

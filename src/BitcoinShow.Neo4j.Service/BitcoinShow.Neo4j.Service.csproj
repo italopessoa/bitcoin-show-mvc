@@ -5,12 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Users\italo\Documents\Visual Studio 2017\Projects\Neo4j.Map.Extension\src\Neo4j.Map.Extension\Neo4j.Map.Extension.csproj" />
     <ProjectReference Include="..\BitcoinShow.Neo4j.Core\BitcoinShow.Neo4j.Core.csproj" />
     <ProjectReference Include="..\BitcoinShow.Neo4j.Repository\BitcoinShow.Neo4j.Repository.csproj" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="Neo4j.Map.Extension" Version="1.1.0-beta" />
   </ItemGroup>
 
 </Project>

@@ -11,11 +11,11 @@
     <PackageReference Include="Moq" Version="4.8.2" />
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
-    <PackageReference Include="Neo4j.Map.Extension" Version="1.1.0-beta" />
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Users\italo\Documents\Visual Studio 2017\Projects\Neo4j.Map.Extension\src\Neo4j.Map.Extension\Neo4j.Map.Extension.csproj" />
     <ProjectReference Include="..\BitcoinShow.Neo4j.Service\BitcoinShow.Neo4j.Service.csproj" />
   </ItemGroup>
 
