@@ -27,7 +27,7 @@ namespace BitcoinShow.Neo4j.Service
                 throw new ArgumentException("UUID value must be empty on creation.", nameof(question.UUID));
             if (question.IncorrectAnswers == null || !question.IncorrectAnswers.Any())
                 throw new ArgumentException("There must be at least one incorrect answer.", nameof(question.IncorrectAnswers));
-            if (string.IsNullOrWhiteSpace(question.CorrectAnswer) || String.IsNullOrEmpty(question.CorrectAnswer))
+            if (string.IsNullOrWhiteSpace(question.CorrectAnswer) || string.IsNullOrEmpty(question.CorrectAnswer))
                 throw new ArgumentException("There must be one correct answer.", nameof(question.CorrectAnswer));
             if (question.IncorrectAnswers.Contains(question.CorrectAnswer))
                 throw new InvalidOperationException($"The correct answer \"{question.CorrectAnswer}\" can't be in the incorrect answers list.");
@@ -64,6 +64,11 @@ namespace BitcoinShow.Neo4j.Service
                 return false;
             }
             return true;
+        }
+
+        public Task ExecuteQueryAsync(string query)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -177,5 +177,10 @@ namespace BitcoinShow.Neo4j.Repository
         {
             _driver.Dispose();
         }
+
+        public Task ExecuteAsync(string cypher)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

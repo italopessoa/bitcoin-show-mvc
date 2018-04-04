@@ -37,5 +37,7 @@ namespace BitcoinShow.Neo4j.Service.Interface
         /// <param name="uuid">Graph node UUID</param>
         /// <returns>True if the node was successfully deleted</returns>
         Task<bool> DeleteByUUIDAsync(string uuid);
+
+        Task ExecuteQueryAsync(string query);
     }
 }

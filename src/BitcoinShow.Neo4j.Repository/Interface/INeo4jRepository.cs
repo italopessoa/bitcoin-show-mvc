@@ -38,5 +38,7 @@ namespace BitcoinShow.Neo4j.Repository.Interface
         /// </summary>
         /// <param name="uuid">UUID</param>
         Task DeleteLabelByUUIDCypherAsync(string uuid);
+
+        Task ExecuteAsync(string cypher);
     }
 }
