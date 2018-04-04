@@ -207,5 +207,28 @@ namespace BitcoinShow.Neo4j.Service.Test
             Assert.True(await service.DeleteByUUIDAsync(uuid));
             repositoryMock.Verify(m => m.DeleteLabelByUUIDCypherAsync(uuid), Times.Once());
         }
+
+        //TODO add more test cases
+        [Fact]
+        public async void ExecuteQueryAsync_EmptyQuery_Error_Test()
+        {
+            Mock<INeo4jRepository> repositoryMock = new Mock<INeo4jRepository>(MockBehavior.Strict);
+            INeo4jService<QuestionNode> service = new QuestionService(repositoryMock.Object);
+            ArgumentNullException exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.ExecuteQueryAsync(string.Empty));
+            Assert.NotNull(exception);
+            Assert.Equal("query", exception.ParamName);
+            repositoryMock.Verify(m => m.ExecuteAsync(It.IsAny<string>()), Times.Never());
+        }
+
+        [Fact]
+        public async void ExecuteQueryAsync_Test()
+        {
+            Mock<INeo4jRepository> repositoryMock = new Mock<INeo4jRepository>(MockBehavior.Strict);
+            repositoryMock.Setup(s => s.ExecuteAsync("query")).Returns(Task.FromResult(0));
+            INeo4jService<QuestionNode> service = new QuestionService(repositoryMock.Object);
+            await service.ExecuteQueryAsync("query");
+
+            repositoryMock.Verify(m => m.ExecuteAsync("query"), Times.Once());
+        }
     }
 }

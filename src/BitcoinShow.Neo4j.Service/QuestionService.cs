@@ -66,9 +66,11 @@ namespace BitcoinShow.Neo4j.Service
             return true;
         }
 
-        public Task ExecuteQueryAsync(string query)
+        public async Task ExecuteQueryAsync(string query)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(query) || string.IsNullOrWhiteSpace(query))
+                throw new ArgumentNullException(nameof(query));
+            await _repository.ExecuteAsync(query);
         }
     }
 }
