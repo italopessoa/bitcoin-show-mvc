@@ -36,8 +36,9 @@ namespace BitcoinShow.Neo4j.Repository.Interface
         /// <summary>
         /// Remove relations and delete node by its uuid
         /// </summary>
-        /// <param name="label">Label name</param>
         /// <param name="uuid">UUID</param>
-        Task DeleteLabelByUUIDCypherAsync<T>(string label, string uuid) where T : Neo4jNode;
+        Task DeleteLabelByUUIDCypherAsync(string uuid);
+
+        Task ExecuteAsync(string cypher);
     }
 }
