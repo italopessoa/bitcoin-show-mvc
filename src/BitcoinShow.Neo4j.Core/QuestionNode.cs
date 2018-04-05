@@ -23,6 +23,14 @@ namespace BitcoinShow.Neo4j.Core
         Boolean
     }
 
+    public enum Gender
+    {
+        [Description("m")]
+        Male,
+        [Description("f")]
+        Female
+    }
+
     /// <summary>
     /// 
     /// </summary>
