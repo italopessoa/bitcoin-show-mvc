@@ -1,0 +1,178 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  DataVolumeId:
+    Type: String
+    Description: Enter neo4j data VolumeId (e.g vol-01d3a4c80e58f6f36).
+Resources:
+  ServerSSMRootRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "ec2.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Description: SSM role for my super server
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      RoleName: !Sub "Neo4jSSMRole-${AWS::StackName}"
+  ServerSSMIntanceProfileRole:
+    DependsOn: ServerSSMRootRole
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      InstanceProfileName: !Sub "Neo4jSSMInstanceProfileRole-${AWS::StackName}"
+      Roles:
+        - !Ref ServerSSMRootRole
+  Neo4jServerSg:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: teste de criacao do sec gr
+      GroupName: !Sub "neo4j-server-sg-${AWS::StackName}"
+      SecurityGroupIngress:
+        - IpProtocol: Tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: lalalal
+        - IpProtocol: Tcp
+          FromPort: 7474
+          ToPort: 7474
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: Tcp
+          FromPort: 7473
+          ToPort: 7473
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: Tcp
+          FromPort: 7687
+          ToPort: 7687
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: tag1
+          Value: sec_group
+  Neo4jServer:
+    Type: "AWS::EC2::Instance"
+    DependsOn:
+      - Neo4jServerSg
+      - ServerSSMIntanceProfileRole
+    Properties:
+      InstanceType: t2.micro
+      AvailabilityZone: !Select
+        - 0
+        - !GetAZs eu-west-1
+      ImageId: ami-07d9160fa81ccffb5
+      IamInstanceProfile: !Ref ServerSSMIntanceProfileRole
+      SecurityGroups:
+        - !Ref Neo4jServerSg
+      Tags:
+        - Key: Name
+          Value: !Sub "Neo4jServer-${AWS::StackName}"
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          yum update -y
+
+          rpm --import https://debian.neo4j.com/neotechnology.gpg.key
+
+          cat <<EOF>  /etc/yum.repos.d/neo4j.repo
+          [neo4j]
+          name=Neo4j RPM Repository
+          baseurl=https://yum.neo4j.com/stable
+          enabled=1
+          gpgcheck=1
+          EOF
+
+          yum install neo4j -y
+
+          #https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-ebs-volumeattachment.html
+          #https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-mount-point.html
+          #https://neo4j.com/docs/operations-manual/current/configuration/set-initial-password/
+          /bin/neo4j-admin set-initial-password secret --require-password-change
+
+          sed -i 's/#dbms.default_listen_address/dbms.default_listen_address/' /etc/neo4j/neo4j.conf
+          sed -i 's/dbms.directories.data=\/var\/lib\/neo4j\/data/dbms.directories.data=\/mnt\/neo4j\/data/' /etc/neo4j/neo4j.conf
+
+          # [ "$X" == '/dev/xvdf: data' ] && echo 'haha'
+          if [ "$(file -s /dev/xvdf)" == '/dev/xvdf: data' ]; then
+          #if it has no file system
+              mkfs -t xfs /dev/xvdf
+          fi
+
+          [ ! -d "/mnt/neo4j/data" ] && mkdir -p /mnt/neo4j/data
+
+          mount /dev/xvdf /mnt/neo4j/data
+          chown neo4j: /mnt/neo4j/data
+
+          service neo4j restart
+
+          chkconfig --add neo4j
+          chkconfig neo4j on
+      Volumes:
+        - Device: "/dev/sdf"
+          VolumeId: !Ref DataVolumeId
+  Collector:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Description: "Lambda function that collects items from queue and populate Neo4j database"
+      FunctionName: !Sub "Fn-Collector-${AWS::StackName}"
+      Handler: index.handler
+      MemorySize: 128
+      #create new Role: arn:aws:iam::account_id:role/lambda_basic_execution
+      Runtime: nodejs12.x
+      Code:
+        ZipFile: |
+          var aws = require('aws-sdk')
+          var response = require('cfn-response')
+          exports.handler = async (event) => {
+              console.log("REQUEST RECEIVED:\n" + JSON.stringify(event))
+              console.log("SERVIDOR: "+process.env.SERVER);
+
+              return {
+                statusCode: 200,
+                body: {
+                 server: process.env.SERVER
+                }
+             }
+          }
+      Timeout: 60
+      Environment:
+        Variables:
+          SERVER: !Join
+            - ""
+            - - "http://"
+              - !GetAtt Neo4jServer.PublicIp
+              - ":7474"
+  ScheduleCollectorRule:
+    Type: "AWS::Events::Rule"
+    Properties:
+      Description: Event that will trigger collector lambda function
+      State: ENABLED
+      Name: !Sub "Neo4jLambdaCollectorTrigger-${AWS::StackName}"
+      ScheduleExpression: "cron(0/1 00-01 * * ? *)"
+      Targets:
+        - Arn: !GetAtt Collector.Arn
+          Id: "Neo4j.Collector.ScheduleRule"
+  PermissionForInvokeCollector:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref Collector
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt ScheduleCollectorRule.Arn
+Outputs:
+  Neo4jPage:
+    Description: neo4j server page
+    Value: !Join
+      - ""
+      - - "http://"
+        - !GetAtt Neo4jServer.PublicDnsName
+        - ":7474"
+  SecurityGroupName:
+    Description: security group reference
+    Value: !Ref Neo4jServerSg
+  SecurityGroupId:
+    Description: security group id
+    Value: !GetAtt Neo4jServerSg.GroupId
