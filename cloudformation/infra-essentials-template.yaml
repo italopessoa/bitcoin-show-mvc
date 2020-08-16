@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  VolumeName:
+    Description: EBS volume name
+    Type: String
+Resources:
+  Neo4jVolume:
+    Type: "AWS::EC2::Volume"
+    Properties:
+      AvailabilityZone: !Select
+        - 0
+        - !GetAZs eu-west-1
+      Size: 8
+      Tags:
+        - Key: Name
+          Value: !Sub "${AWS::StackName}-${VolumeName}"
+  Neo4jCloudformationExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "Neo4jCloudformationExecutionRole"
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "cloudformation.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+        - arn:aws:iam::aws:policy/IAMFullAccess
+        - arn:aws:iam::aws:policy/AmazonEC2FullAccess
+      Policies:
+        - PolicyName: "Neo4jCloudformationCreateEventBridgeRulePolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "events:DeleteRule"
+                  - "events:PutTargets"
+                  - "events:DescribeRule"
+                  - "events:PutRule"
+                  - "events:RemoveTargets"
+                Resource: "*"
+        - PolicyName: "Neo4jCloudformationCreateLambdaFunctionsPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "lambda:CreateFunction"
+                  - "lambda:AddPermission"
+                  - "lambda:GetFunction"
+                  - "lambda:GetFunctionConfiguration"
+                  - "lambda:DeleteFunction"
+                  - "lambda:RemovePermission"
+                Resource: "*"
