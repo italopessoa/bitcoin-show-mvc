@@ -1,0 +1,162 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: "cria sub stack"
+
+Parameters:
+  Neo4jStackName:
+    Description: Stack name
+    Type: String
+    Default: neo4j-infra
+  CfnRole:
+    Description: IAM role for CloudFormation to use for all operations performed on the stack.
+    Type: String
+  Neo4jTemplateUrl:
+    Description: Location of file containing the template body (e.g https://my-templates.s3-eu-west-1.amazonaws.com/template.yml)
+    Type: String
+  Neo4jVolumeId:
+    Description: Neo4j database EBS VolumeId
+    Type: String
+Resources:
+  LambdaDeleteNeo4jServer:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: !Sub "Delete stack ${Neo4jStackName}"
+      # FunctionName: !Sub
+      #   - FdDelete-${oi}
+      #   - { oi: !Ref Neo4jStackName }
+      FunctionName: !Sub "FnDelete-${Neo4jStackName}"
+      Handler: index.handler
+      MemorySize: 128
+      Role: !GetAtt LambdaNeo4jStackRole.Arn
+      Runtime: nodejs12.x
+      Timeout: 60
+      Code:
+        ZipFile: |
+          var AWS = require('aws-sdk');
+          var cloudformation = new AWS.CloudFormation();
+
+          exports.handler = async (event) => {
+              // TODO implement
+              const response = {
+                  statusCode: 200,
+                  body: JSON.stringify('Hello from Lambda!'),
+              };
+
+              var params = { StackName: process.env.STACK_NAME, RoleARN: process.env.CFN_ROLE};
+              var result = await cloudformation.deleteStack(params).promise();
+
+              return response;
+          };
+      Environment:
+        Variables:
+          STACK_NAME: !Ref Neo4jStackName
+          CFN_ROLE: !Ref CfnRole
+
+  LambdaCreateNeo4jServer:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: !Sub "Create stack ${Neo4jStackName}"
+      # FunctionName: !Sub
+      #   - FdDelete-${oi}
+      #   - { oi: !Ref Neo4jStackName }
+      FunctionName: !Sub "FnCreate-${Neo4jStackName}"
+      Handler: index.handler
+      MemorySize: 128
+      Role: !GetAtt LambdaNeo4jStackRole.Arn
+      Runtime: nodejs12.x
+      Timeout: 60
+      Code:
+        ZipFile: |
+          var AWS = require('aws-sdk');
+          var cloudformation = new AWS.CloudFormation();
+
+          exports.handler = async (event) => {
+              // TODO implement
+              const response = {
+                  statusCode: 200,
+                  body: JSON.stringify('Hello from Lambda!'),
+              };
+              //https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFormation.html#createStack-property
+
+              var params = {
+                  StackName: process.env.STACK_NAME, /* required */
+                  Capabilities: ['CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM'],// | CAPABILITY_AUTO_EXPAND,
+                  OnFailure: 'ROLLBACK',
+                  Parameters: [
+                      {
+                          ParameterKey: 'DataVolumeId',
+                          ParameterValue: process.env.EBS_VOLUME_ID,
+                          //ResolvedValue: process.env.EBS_VOLUME_ID,
+                          //UsePreviousValue: true || false
+                      }
+                  ],
+                  RoleARN: process.env.CFN_ROLE,
+                  Tags: [
+                      {
+                          Key: 'STRING_VALUE', /* required */
+                          Value: 'STRING_VALUE' /* required */
+                      },
+                  ],
+                  TemplateURL: process.env.TEMPLATE_URL,
+              };
+              var x = await cloudformation.createStack(params).promise()
+              console.log(x);
+
+              return response;
+          };
+      Environment:
+        Variables:
+          STACK_NAME: !Ref Neo4jStackName
+          CFN_ROLE: !Ref CfnRole
+          TEMPLATE_URL: !Ref Neo4jTemplateUrl
+          EBS_VOLUME_ID: !Ref Neo4jVolumeId
+  LambdaNeo4jStackRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "Delete-${Neo4jStackName}-Role"
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+      Policies:
+        - PolicyName: !Sub "Delete-${Neo4jStackName}-Policy"
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "cloudformation:DeleteStack"
+                  - "cloudformation:CreateStack"
+                # Resource: !Sub "${AWS::StackId}"
+                Resource: !Sub "arn:aws:cloudformation:eu-west-1:*:stack/${Neo4jStackName}/*"
+        - PolicyName: !Sub "Delete-${Neo4jStackName}-PassRole-Policy"
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "iam:PassRole"
+                Resource: !Ref CfnRole
+  # DeleteNeo4jServerRule:
+  #   Type: "AWS::Events::Rule"
+  #   Properties:
+  #     Description: Event that will trigger collector lambda function
+  #     State: ENABLED
+  #     Name: !Sub "Delete-${Neo4jStackName}-Trigger"
+  #     ScheduleExpression: "cron(57 9 * * ? *)"
+  #     Targets:
+  #       - Arn: !GetAtt LambdaDeleteNeo4jServer.Arn
+  #         Id: "Neo4j.DeleteNeo4jServerRule"
+  # PermissionForDeleteNeo4jServerRule:
+  #   Type: AWS::Lambda::Permission
+  #   Properties:
+  #     FunctionName: !Ref LambdaDeleteNeo4jServer
+  #     Action: "lambda:InvokeFunction"
+  #     Principal: "events.amazonaws.com"
+  #     SourceArn: !GetAtt DeleteNeo4jServerRule.Arn
