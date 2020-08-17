@@ -113,14 +113,42 @@ Resources:
       Volumes:
         - Device: "/dev/sdf"
           VolumeId: !Ref DataVolumeId
-  Collector:
+  FnCollectorRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "FnCollector${AWS::StackName}-Role"
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: !Sub "FnCollector${AWS::StackName}-Policy"
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "logs:CreateLogGroup"
+                Resource: "arn:aws:logs:eu-west-1:*:*"
+              - Effect: Allow
+                Action:
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource:
+                  - !Sub "arn:aws:logs:eu-west-1:*:log-group:/aws/lambda/FnCollector${AWS::StackName}:*"
+  FnCollector:
     Type: "AWS::Lambda::Function"
     Properties:
       Description: "Lambda function that collects items from queue and populate Neo4j database"
-      FunctionName: !Sub "Fn-Collector-${AWS::StackName}"
+      FunctionName: !Sub "FnCollector${AWS::StackName}"
       Handler: index.handler
       MemorySize: 128
-      #create new Role: arn:aws:iam::account_id:role/lambda_basic_execution
+      Role: !GetAtt FnCollectorRole.Arn
       Runtime: nodejs12.x
       Code:
         ZipFile: |
@@ -153,12 +181,12 @@ Resources:
       Name: !Sub "Neo4jLambdaCollectorTrigger-${AWS::StackName}"
       ScheduleExpression: "cron(0/1 00-01 * * ? *)"
       Targets:
-        - Arn: !GetAtt Collector.Arn
+        - Arn: !GetAtt FnCollector.Arn
           Id: "Neo4j.Collector.ScheduleRule"
   PermissionForInvokeCollector:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref Collector
+      FunctionName: !Ref FnCollector
       Action: "lambda:InvokeFunction"
       Principal: "events.amazonaws.com"
       SourceArn: !GetAtt ScheduleCollectorRule.Arn
