@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: "cria sub stack"
+Description: "create neo4j stack automatically using lambda functions"
 
 Parameters:
   Neo4jStackName:
@@ -43,6 +43,7 @@ Resources:
 
               var params = { StackName: process.env.STACK_NAME, RoleARN: process.env.CFN_ROLE};
               var result = await cloudformation.deleteStack(params).promise();
+              console.log("CRIATED")
 
               return response;
           };
@@ -99,7 +100,7 @@ Resources:
                   TemplateURL: process.env.TEMPLATE_URL,
               };
               var x = await cloudformation.createStack(params).promise()
-              console.log(x);
+              console.log("TESTE");
 
               return response;
           };
@@ -133,8 +134,18 @@ Resources:
                 Action:
                   - "cloudformation:DeleteStack"
                   - "cloudformation:CreateStack"
-                # Resource: !Sub "${AWS::StackId}"
                 Resource: !Sub "arn:aws:cloudformation:eu-west-1:*:stack/${Neo4jStackName}/*"
+              - Effect: Allow
+                Action:
+                  - "logs:CreateLogGroup"
+                Resource: "arn:aws:logs:eu-west-1:*:*"
+              - Effect: Allow
+                Action:
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource:
+                  - !Sub "arn:aws:logs:eu-west-1:*:log-group:/aws/lambda/FnDelete-${Neo4jStackName}:*"
+                  - !Sub "arn:aws:logs:eu-west-1:*:log-group:/aws/lambda/FnCreate-${Neo4jStackName}:*"
         - PolicyName: !Sub "Delete-${Neo4jStackName}-PassRole-Policy"
           PolicyDocument:
             Version: 2012-10-17
@@ -143,20 +154,37 @@ Resources:
                 Action:
                   - "iam:PassRole"
                 Resource: !Ref CfnRole
-  # DeleteNeo4jServerRule:
-  #   Type: "AWS::Events::Rule"
-  #   Properties:
-  #     Description: Event that will trigger collector lambda function
-  #     State: ENABLED
-  #     Name: !Sub "Delete-${Neo4jStackName}-Trigger"
-  #     ScheduleExpression: "cron(57 9 * * ? *)"
-  #     Targets:
-  #       - Arn: !GetAtt LambdaDeleteNeo4jServer.Arn
-  #         Id: "Neo4j.DeleteNeo4jServerRule"
-  # PermissionForDeleteNeo4jServerRule:
-  #   Type: AWS::Lambda::Permission
-  #   Properties:
-  #     FunctionName: !Ref LambdaDeleteNeo4jServer
-  #     Action: "lambda:InvokeFunction"
-  #     Principal: "events.amazonaws.com"
-  #     SourceArn: !GetAtt DeleteNeo4jServerRule.Arn
+  CreateNeo4jServerRule:
+    Type: "AWS::Events::Rule"
+    Properties:
+      Description: !Sub "Event that will trigger FnCreate-${Neo4jStackName} lambda function"
+      State: ENABLED
+      Name: !Sub "Create-${Neo4jStackName}-Trigger"
+      ScheduleExpression: "cron(15 20 * * ? *)"
+      Targets:
+        - Arn: !GetAtt LambdaCreateNeo4jServer.Arn
+          Id: "Neo4j.CreateNeo4jServerRule"
+  PermissionForCreateNeo4jServerRule:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref LambdaCreateNeo4jServer
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt CreateNeo4jServerRule.Arn
+  DeleteNeo4jServerRule:
+    Type: "AWS::Events::Rule"
+    Properties:
+      Description: !Sub "Event that will trigger FnCreate-${Neo4jStackName} lambda function"
+      State: ENABLED
+      Name: !Sub "Delete-${Neo4jStackName}-Trigger"
+      ScheduleExpression: "cron(26 20 * * ? *)"
+      Targets:
+        - Arn: !GetAtt LambdaDeleteNeo4jServer.Arn
+          Id: "Neo4j.DeleteNeo4jServerRule"
+  PermissionForDeleteNeo4jServerRule:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref LambdaDeleteNeo4jServer
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt DeleteNeo4jServerRule.Arn
